@@ -11,32 +11,21 @@ import torch
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
 from ugnn.gnns import GCN, GAT, train, valid
 from ugnn.utils import accuracy, avg_set_size, coverage
-
-# %% [markdown]
-# ## Experiment parameters
+from ugnn.config import EXPERIMENT_PARAMS
 
 # %%
-# Training/validation/calibration/test dataset split sizes
-# props = np.array([0.2, 0.1, 0.35, 0.35])
-props = np.array([0.5, 0.3, 0.1, 0.1])
+# Unpack parameters from EXPERIMENT_PARAMS
+props = EXPERIMENT_PARAMS["props"]
+alpha = EXPERIMENT_PARAMS["alpha"]
+num_train_trans = EXPERIMENT_PARAMS["num_train_trans"]
+num_permute_trans = EXPERIMENT_PARAMS["num_permute_trans"]
+num_train_semi_ind = EXPERIMENT_PARAMS["num_train_semi_ind"]
+num_epochs = EXPERIMENT_PARAMS["num_epochs"]
+num_channels_GCN = EXPERIMENT_PARAMS["num_channels_GCN"]
+num_channels_GAT = EXPERIMENT_PARAMS["num_channels_GAT"]
+learning_rate = EXPERIMENT_PARAMS["learning_rate"]
+weight_decay = EXPERIMENT_PARAMS["weight_decay"]
 
-assert np.sum(props) == 1
-
-
-# Target 1-coverage for conformal prediction
-alpha = 0.1
-
-# Number of experiments
-num_train_trans = 10
-num_permute_trans = 100
-num_train_semi_ind = 50
-
-# GNN model parameters
-num_epochs = 200
-num_channels_GCN = 16
-num_channels_GAT = 16
-learning_rate = 0.01
-weight_decay = 5e-4
 
 # Save results
 results_file = f"results/SBM_with_less_test.pkl"
