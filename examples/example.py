@@ -5,14 +5,18 @@ import numpy as np
 import pickle
 import pyemb as eb
 from tqdm import tqdm
+import os
+from datetime import datetime
 
 import torch
 
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
 from ugnn.gnns import GCN, GAT, train, valid
-from ugnn.utils import accuracy, avg_set_size, coverage
+from ugnn.utils.metrics import accuracy, avg_set_size, coverage
 from ugnn.config import EXPERIMENT_PARAMS
+from ugnn.utils.masks import mask_split, mask_mix
 
+np.random.seed(42)
 # %%
 # Unpack parameters from EXPERIMENT_PARAMS
 props = EXPERIMENT_PARAMS["props"]
@@ -27,19 +31,16 @@ learning_rate = EXPERIMENT_PARAMS["learning_rate"]
 weight_decay = EXPERIMENT_PARAMS["weight_decay"]
 
 
-# Save results
-results_file = f"results/SBM_with_less_test.pkl"
-
-# %% [markdown]
-# ## Generate dataset
-
-# %%
-np.random.seed(42)
-
-# %% [markdown]
-# Set dynamic SBM parameters.
+# Prepare results directory
+experiment_name = "example_experiment"
+results_dir = f"results/{experiment_name}"
+os.makedirs(results_dir, exist_ok=True)
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+results_file = f"{results_dir}/experiment_{timestamp}.pkl"
 
 # %%
+# GENERATE DATASET
+
 K = 3
 n = 100 * K
 T = 8
@@ -55,43 +56,17 @@ for t in range(T):
     for k in range(K):
         Bs[t, k, k] = a[(T_list[t] & (1 << k)) >> k]
 
-# %%
-# As, Z = se.generate_SBM_dynamic(n, Bs, pi)
 As, Z = eb.simulation.SBM(n, Bs, pi)
 
 node_labels = np.tile(Z, T)
 num_classes = K
 
 # %%
-# # (For the dataset plotting script - not required for the experiments to run)
-
-# from scipy import sparse
-
-# As_sparse = [sparse.csr_matrix(A) for A in As]
-# for i, A_sparse in enumerate(As_sparse):
-#     sparse.save_npz(f"data/sbm/sbm_As_{i}.npz", A_sparse)
-
-# np.save(f"data/sbm/sbm_node_labels.npy", node_labels)
-
-# %% [markdown]
-# ## GNN functions
-
-# %% [markdown]
-# Dynamic network class that puts a list of adjacency matrices along with class labels into a pytorch geometric dataset. This is then used to create the block diagonal and dilated unfolded adjacency matrices for input into the graph neural networks.
-
-# %%
+# Convert the data from adjacency matrices and labels to torch geometric datasets
+# One for the block diagonal representation and one for the unfolded representation
 dataset = Dynamic_Network(As, node_labels)
 dataset_BD = Block_Diagonal_Network(dataset)[0]
 dataset_UA = Unfolded_Network(dataset)[0]
-
-# %% [markdown]
-# Define general GCN and GAT neural networks to be applied to both the block diagonal and dilated unfolded networks.
-
-# %% [markdown]
-# ## Data split functions
-
-# %% [markdown]
-# Create a data mask that consists only of useful nodes for training and testing. We only consider nodes in a particular time window if it has degree greater than zero at that time window.
 
 # %%
 data_mask = np.array([[True] * T for _ in range(n)])
@@ -102,109 +77,6 @@ for t in range(T):
 print(
     f"Percentage of usable node/time pairs: {100 * np.sum(data_mask) / (n * T) :02.1f}%"
 )
-
-
-# %%
-def mask_split(mask, split_props, seed=0, mode="transductive"):
-    np.random.seed(seed)
-
-    n, T = mask.shape
-
-    if mode == "transductive":
-        # Flatten mask array into one dimension in blocks of nodes per time
-        flat_mask = mask.T.reshape(-1)
-        n_masks = np.sum(flat_mask)
-
-        # Split shuffled flatten mask array indices into correct proportions
-        flat_mask_idx = np.where(flat_mask)[0]
-        np.random.shuffle(flat_mask_idx)
-        split_ns = np.cumsum([round(n_masks * prop) for prop in split_props[:-1]])
-        split_idx = np.split(flat_mask_idx, split_ns)
-
-    if mode == "semi-inductive":
-
-        # Find time such that final proportion of masks happen after that time
-        T_trunc = np.where(
-            np.cumsum(np.sum(mask, axis=0) / np.sum(mask)) >= 1 - split_props[-1]
-        )[0][0]
-
-        # Flatten mask arrays into one dimension in blocks of nodes per time
-        flat_mask_start = mask[:, :T_trunc].T.reshape(-1)
-        flat_mask_end = mask[:, T_trunc:].T.reshape(-1)
-        n_masks_start = np.sum(flat_mask_start)
-
-        # Split starting shuffled flatten mask array into correct proportions
-        flat_mask_start_idx = np.where(flat_mask_start)[0]
-        np.random.shuffle(flat_mask_start_idx)
-        split_props_start = split_props[:-1] / np.sum(split_props[:-1])
-        split_ns = np.cumsum(
-            [round(n_masks_start * prop) for prop in split_props_start[:-1]]
-        )
-        split_idx = np.split(flat_mask_start_idx, split_ns)
-
-        # Place finishing flatten mask array at the end
-        split_idx.append(n * T_trunc + np.where(flat_mask_end)[0])
-
-    if mode == "assisted semi-inductive":
-
-        # Find time such that final proportion of masks happen after that time
-        T_trunc = np.where(
-            np.cumsum(np.sum(mask, axis=0) / np.sum(mask)) >= 1 - split_props[-1]
-        )[0][0]
-
-        # Flatten mask arrays into one dimension in blocks of nodes per time
-        flat_mask_start = mask[:, :T_trunc].T.reshape(-1)
-        flat_mask_end = mask[:, T_trunc:].T.reshape(-1)
-        n_masks_start = np.sum(flat_mask_start)
-        n_masks_end = np.sum(flat_mask_end)
-
-        # Split starting shuffled flatten mask array into correct proportions
-        flat_mask_start_idx = np.where(flat_mask_start)[0]
-        np.random.shuffle(flat_mask_start_idx)
-        split_props_start = split_props[:-2] / np.sum(split_props[:-2])
-        split_ns = np.cumsum(
-            [round(n_masks_start * prop) for prop in split_props_start[:-1]]
-        )
-        split_idx = np.split(flat_mask_start_idx, split_ns)
-
-        # Do the same for after T_trunc
-        flat_mask_end_idx = np.where(flat_mask_end)[0]
-        np.random.shuffle(flat_mask_end_idx)
-        split_props_end = split_props[-2:] / np.sum(split_props[-2:])
-        split_ns = np.cumsum(
-            [round(n_masks_end * prop) for prop in split_props_end[:-1]]
-        )
-        split_idx.append(n * T_trunc + np.split(flat_mask_end_idx, split_ns)[0])
-        split_idx.append(n * T_trunc + np.split(flat_mask_end_idx, split_ns)[1])
-
-    split_masks = np.array([[False] * n * T for _ in range(len(split_props))])
-    for i in range(len(split_props)):
-        split_masks[i, split_idx[i]] = True
-
-    return split_masks
-
-
-# %%
-def mask_mix(mask_1, mask_2, seed=0):
-    np.random.seed(seed)
-
-    n = len(mask_1)
-    n1 = np.sum(mask_1)
-    n2 = np.sum(mask_2)
-
-    mask_idx = np.where(mask_1 + mask_2)[0]
-    np.random.shuffle(mask_idx)
-    split_idx = np.split(mask_idx, [n1])
-
-    split_masks = np.array([[False] * n for _ in range(2)])
-    for i in range(2):
-        split_masks[i, split_idx[i]] = True
-
-    return split_masks
-
-
-# %% [markdown]
-# Testing the training/validation/calibration/test data split functions.
 
 # %%
 train_mask, valid_mask, calib_mask, test_mask = mask_split(
@@ -611,3 +483,15 @@ for method, GNN_model in product(methods, GNN_models):
 # %%
 with open(results_file, "wb") as file:
     pickle.dump(results, file)
+
+
+# # Save results
+# def save_results(params, metrics, file_path):
+#     results = {"parameters": params, "metrics": metrics}
+#     with open(file_path, "wb") as f:
+#         pickle.dump(results, f)
+
+
+# # Run and save experiment
+# metrics = run_experiment(EXPERIMENT_PARAMS)
+# save_results(EXPERIMENT_PARAMS, metrics, results_file)
