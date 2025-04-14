@@ -14,7 +14,8 @@ from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Netw
 from ugnn.gnns import GCN, GAT, train, valid
 from ugnn.utils.metrics import accuracy, avg_set_size, coverage
 from ugnn.config import EXPERIMENT_PARAMS
-from ugnn.utils.masks import mask_split, mask_mix
+from ugnn.utils.masks import mask_split, mask_mix, non_zero_degree_mask
+from ugnn.conformal import get_prediction_sets
 
 np.random.seed(42)
 # %%
@@ -69,62 +70,13 @@ dataset_BD = Block_Diagonal_Network(dataset)[0]
 dataset_UA = Unfolded_Network(dataset)[0]
 
 # %%
-data_mask = np.array([[True] * T for _ in range(n)])
+# Remove nodes with zero degree for each time point
+data_mask = non_zero_degree_mask(As, n, T)
 
-for t in range(T):
-    data_mask[np.where(np.sum(As[t], axis=0) == 0)[0], t] = False
-
-print(
-    f"Percentage of usable node/time pairs: {100 * np.sum(data_mask) / (n * T) :02.1f}%"
-)
-
-# %%
+# Randomly separate remaining nodes according to data split proportions and regime
 train_mask, valid_mask, calib_mask, test_mask = mask_split(
     data_mask, props, mode="semi-inductive"
 )
-
-print(f"Percentage train: {100 * np.sum(train_mask) / np.sum(data_mask) :02.1f}%")
-print(f"Percentage valid: {100 * np.sum(valid_mask) / np.sum(data_mask) :02.1f}%")
-print(f"Percentage calib: {100 * np.sum(calib_mask) / np.sum(data_mask) :02.1f}%")
-print(f"Percentage test:  {100 * np.sum(test_mask)  / np.sum(data_mask) :02.1f}%")
-
-# %% [markdown]
-# ## Conformal prediction functions
-
-
-# %%
-def get_prediction_sets(output, data, calib_mask, test_mask, alpha=0.1):
-    n_calib = calib_mask.sum()
-
-    # Compute softmax probabilities
-    smx = torch.nn.Softmax(dim=1)
-    calib_heuristic = smx(output[calib_mask]).detach().numpy()
-    test_heuristic = smx(output[test_mask]).detach().numpy()
-
-    # APS
-    calib_pi = calib_heuristic.argsort(1)[:, ::-1]
-    calib_srt = np.take_along_axis(calib_heuristic, calib_pi, axis=1).cumsum(axis=1)
-    calib_scores = np.take_along_axis(calib_srt, calib_pi.argsort(axis=1), axis=1)[
-        range(n_calib), data.y[calib_mask]
-    ]
-
-    # Get the score quantile
-    qhat = np.quantile(
-        calib_scores, np.ceil((n_calib + 1) * (1 - alpha)) / n_calib, method="higher"
-    )
-
-    test_pi = test_heuristic.argsort(1)[:, ::-1]
-    test_srt = np.take_along_axis(test_heuristic, test_pi, axis=1).cumsum(axis=1)
-    pred_sets = np.take_along_axis(test_srt <= qhat, test_pi.argsort(axis=1), axis=1)
-
-    return pred_sets
-
-
-# %% [markdown]
-# ## GNN training
-
-# %% [markdown]
-# Initiate nested results data structure.
 
 # %%
 results = {}
@@ -204,7 +156,9 @@ for method, GNN_model in product(methods, GNN_models):
             # Permute the calibration and test datasets
             calib_mask, test_mask = mask_mix(calib_mask, test_mask, seed=j)
 
-            pred_sets = get_prediction_sets(output, data, calib_mask, test_mask, alpha)
+            pred_sets = get_prediction_sets(
+                output, data, calib_mask, test_mask, alpha, method="APS"
+            )
 
             results[method][GNN_model]["Assisted Semi-Ind"]["Accuracy"]["All"].append(
                 accuracy(output, data, test_mask)
@@ -318,7 +272,9 @@ for method, GNN_model in product(methods, GNN_models):
             # Permute the calibration and test datasets
             calib_mask, test_mask = mask_mix(calib_mask, test_mask, seed=j)
 
-            pred_sets = get_prediction_sets(output, data, calib_mask, test_mask, alpha)
+            pred_sets = get_prediction_sets(
+                output, data, calib_mask, test_mask, alpha, method="APS"
+            )
 
             results[method][GNN_model]["Trans"]["Accuracy"]["All"].append(
                 accuracy(output, data, test_mask)
@@ -423,7 +379,9 @@ for method, GNN_model in product(methods, GNN_models):
 
         # Cannot permute the calibration and test datasets in semi-inductive experiments
 
-        pred_sets = get_prediction_sets(output, data, calib_mask, test_mask, alpha)
+        pred_sets = get_prediction_sets(
+            output, data, calib_mask, test_mask, alpha, method="APS"
+        )
 
         results[method][GNN_model]["Semi-Ind"]["Accuracy"]["All"].append(
             accuracy(output, data, test_mask)

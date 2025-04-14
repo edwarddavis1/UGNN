@@ -1,6 +1,24 @@
 import numpy as np
 
 
+def non_zero_degree_mask(As, n, T):
+    """
+    Create a data mask which removes nodes with zero connections at each time step.
+
+    Args:
+        As (list of np.ndarray): List of adjacency matrices for each time step.
+        n (int): Number of nodes.
+        T (int): Number of time steps.
+
+    Returns:
+        np.ndarray: A boolean mask indicating usable node/time pairs.
+    """
+    data_mask = np.array([[True] * T for _ in range(n)])
+    for t in range(T):
+        data_mask[np.where(np.sum(As[t], axis=0) == 0)[0], t] = False
+    return data_mask
+
+
 def mask_split(mask, split_props, seed=0, mode="transductive"):
     np.random.seed(seed)
 
