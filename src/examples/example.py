@@ -3,19 +3,14 @@ import copy
 from itertools import product
 import numpy as np
 import pickle
-from scipy.linalg import block_diag
-
-# import spectral_embedding as se
 import pyemb as eb
-
 from tqdm import tqdm
 
 import torch
-from torch.functional import F
 
-import torch_geometric
-from torch_geometric.data import Dataset
-from torch_geometric.nn import GATConv, GCNConv
+from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
+from ugnn.gnns import GCN, GAT, train, valid
+from ugnn.utils import accuracy, avg_set_size, coverage
 
 # %% [markdown]
 # ## Experiment parameters
@@ -31,13 +26,6 @@ assert np.sum(props) == 1
 # Target 1-coverage for conformal prediction
 alpha = 0.1
 
-# print("WARNING: reduced parameters")
-# num_train_trans = 2
-# num_permute_trans = 1
-# num_train_semi_ind = 2
-# num_epochs = 10
-
-
 # Number of experiments
 num_train_trans = 10
 num_permute_trans = 100
@@ -51,8 +39,6 @@ learning_rate = 0.01
 weight_decay = 5e-4
 
 # Save results
-# results_file = 'results/Conformal_GNN_SBM_Results_10_100_50.pkl'
-# results_file = 'results/Conformal_GNN_SBM_Results_10_100_50.pkl'
 results_file = f"results/SBM_with_less_test.pkl"
 
 # %% [markdown]
@@ -88,120 +74,21 @@ node_labels = np.tile(Z, T)
 num_classes = K
 
 # %%
-# (For the dataset plotting script - not required for the experiments to run)
+# # (For the dataset plotting script - not required for the experiments to run)
 
-from scipy import sparse
+# from scipy import sparse
 
-As_sparse = [sparse.csr_matrix(A) for A in As]
-for i, A_sparse in enumerate(As_sparse):
-    sparse.save_npz(f"data/sbm/sbm_As_{i}.npz", A_sparse)
+# As_sparse = [sparse.csr_matrix(A) for A in As]
+# for i, A_sparse in enumerate(As_sparse):
+#     sparse.save_npz(f"data/sbm/sbm_As_{i}.npz", A_sparse)
 
-np.save(f"data/sbm/sbm_node_labels.npy", node_labels)
+# np.save(f"data/sbm/sbm_node_labels.npy", node_labels)
 
 # %% [markdown]
 # ## GNN functions
 
 # %% [markdown]
 # Dynamic network class that puts a list of adjacency matrices along with class labels into a pytorch geometric dataset. This is then used to create the block diagonal and dilated unfolded adjacency matrices for input into the graph neural networks.
-
-
-# %%
-class Dynamic_Network(Dataset):
-    """
-    A pytorch geometric dataset for a dynamic network.
-    """
-
-    def __init__(self, As, labels):
-        self.As = As
-        self.T = As.shape[0]
-        self.n = As.shape[1]
-        self.classes = labels
-
-    def __len__(self):
-        return len(self.As)
-
-    def __getitem__(self, idx):
-        x = torch.tensor(np.eye(self.n), dtype=torch.float)
-        edge_index = torch.tensor(
-            np.array([self.As[idx].nonzero()]), dtype=torch.long
-        ).reshape(2, -1)
-        y = torch.tensor(self.classes, dtype=torch.long)
-
-        # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
-        data.num_nodes = self.n
-
-        return data
-
-
-# %%
-class Block_Diagonal_Network(Dataset):
-    """
-    A pytorch geometric dataset for the block diagonal version of a Dynamic Network object.
-    """
-
-    def __init__(self, dataset):
-        self.A = block_diag(*dataset.As)
-        self.T = dataset.T
-        self.n = dataset.n
-        self.classes = dataset.classes
-
-    def __len__(self):
-        return 1
-
-    def __getitem__(self, idx):
-        x = torch.tensor(np.eye(self.n * self.T), dtype=torch.float)
-        edge_index = torch.tensor(
-            np.array([self.A.nonzero()]), dtype=torch.long
-        ).reshape(2, -1)
-        y = torch.tensor(self.classes, dtype=torch.long)
-
-        # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
-        data.num_nodes = self.n * self.T
-
-        return data
-
-
-# %%
-class Unfolded_Network(Dataset):
-    """
-    A pytorch geometric dataset for the dilated unfolding of a Dynamic Network object.
-    """
-
-    def __init__(self, dataset):
-        self.A_unf = np.block([dataset.As[t] for t in range(dataset.T)])
-        self.A = np.block(
-            [
-                [np.zeros((dataset.n, dataset.n)), self.A_unf],
-                [
-                    self.A_unf.T,
-                    np.zeros((dataset.n * dataset.T, dataset.n * dataset.T)),
-                ],
-            ]
-        )
-        self.T = dataset.T
-        self.n = dataset.n
-        self.classes = dataset.classes
-
-    def __len__(self):
-        return 1
-
-    def __getitem__(self, idx):
-        x = torch.tensor(np.eye(self.n * (self.T + 1)), dtype=torch.float)
-        edge_index = torch.tensor(
-            np.array([self.A.nonzero()]), dtype=torch.long
-        ).reshape(2, -1)
-        y = torch.tensor(
-            np.concatenate((np.zeros(self.n), self.classes)), dtype=torch.long
-        )
-
-        # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
-        data.num_nodes = self.n * (self.T + 1)
-
-        return data
-
 
 # %%
 dataset = Dynamic_Network(As, node_labels)
@@ -210,65 +97,6 @@ dataset_UA = Unfolded_Network(dataset)[0]
 
 # %% [markdown]
 # Define general GCN and GAT neural networks to be applied to both the block diagonal and dilated unfolded networks.
-
-
-# %%
-class GCN(torch.nn.Module):
-    def __init__(self, num_nodes, num_channels, num_classes, seed):
-        super().__init__()
-        torch.manual_seed(seed)
-        self.conv1 = GCNConv(num_nodes, num_channels)
-        self.conv2 = GCNConv(num_channels, num_classes)
-
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = x.relu()
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index)
-
-        return x
-
-
-class GAT(torch.nn.Module):
-    def __init__(self, num_nodes, num_channels, num_classes, seed):
-        super().__init__()
-        torch.manual_seed(seed)
-        self.conv1 = GATConv(num_nodes, num_channels)
-        self.conv2 = GATConv(num_channels, num_classes)
-
-    def forward(self, x, edge_index):
-        x = self.conv1(x, edge_index)
-        x = x.relu()
-        x = F.dropout(x, p=0.5, training=self.training)
-        x = self.conv2(x, edge_index)
-
-        return x
-
-
-# %%
-def train(model, data, train_mask):
-    model.train()
-    optimizer.zero_grad()
-    criterion = torch.nn.CrossEntropyLoss()
-
-    out = model(data.x, data.edge_index)
-    loss = criterion(out[train_mask], data.y[train_mask])
-    loss.backward()
-    optimizer.step()
-
-    return loss
-
-
-def valid(model, data, valid_mask):
-    model.eval()
-
-    out = model(data.x, data.edge_index)
-    pred = out.argmax(dim=1)
-    correct = pred[valid_mask] == data.y[valid_mask]
-    acc = int(correct.sum()) / int(valid_mask.sum())
-
-    return acc
-
 
 # %% [markdown]
 # ## Data split functions
@@ -431,29 +259,6 @@ def get_prediction_sets(output, data, calib_mask, test_mask, alpha=0.1):
     return pred_sets
 
 
-# %%
-def accuracy(output, data, test_mask):
-    pred = output.argmax(dim=1)
-    correct = pred[test_mask] == data.y[test_mask]
-    acc = int(correct.sum()) / int(test_mask.sum())
-
-    return acc
-
-
-# %%
-def avg_set_size(pred_sets, test_mask):
-    return np.mean(np.sum(pred_sets, axis=1))
-
-
-# %%
-def coverage(pred_sets, data, test_mask):
-    in_set = np.array(
-        [pred_set[label] for pred_set, label in zip(pred_sets, data.y[test_mask])]
-    )
-
-    return np.mean(in_set)
-
-
 # %% [markdown]
 # ## GNN training
 
@@ -504,7 +309,7 @@ for method, GNN_model in product(methods, GNN_models):
         if method == "UA":
             method_str = "Unfolded"
             data = dataset_UA
-            # Pad masks to include anchor nodes
+            # Pad masKs to include anchor nodes
             train_mask = np.concatenate((np.array([False] * n), train_mask))
             valid_mask = np.concatenate((np.array([False] * n), valid_mask))
             calib_mask = np.concatenate((np.array([False] * n), calib_mask))
@@ -523,7 +328,7 @@ for method, GNN_model in product(methods, GNN_models):
         max_valid_acc = 0
 
         for epoch in tqdm(range(num_epochs)):
-            train_loss = train(model, data, train_mask)
+            train_loss = train(model, data, train_mask, optimizer)
             valid_acc = valid(model, data, valid_mask)
 
             if valid_acc > max_valid_acc:
@@ -544,7 +349,7 @@ for method, GNN_model in product(methods, GNN_models):
                 accuracy(output, data, test_mask)
             )
             results[method][GNN_model]["Assisted Semi-Ind"]["Avg Size"]["All"].append(
-                avg_set_size(pred_sets, test_mask)
+                avg_set_size(pred_sets)
             )
             coverage_value = coverage(pred_sets, data, test_mask)
             results[method][GNN_model]["Assisted Semi-Ind"]["Coverage"]["All"].append(
@@ -583,7 +388,7 @@ for method, GNN_model in product(methods, GNN_models):
                     accuracy(output, data, test_mask_t)
                 )
                 results[method][GNN_model]["Assisted Semi-Ind"]["Avg Size"][t].append(
-                    avg_set_size(pred_sets_t, test_mask_t)
+                    avg_set_size(pred_sets_t)
                 )
                 results[method][GNN_model]["Assisted Semi-Ind"]["Coverage"][t].append(
                     coverage(pred_sets_t, data, test_mask_t)
@@ -637,7 +442,7 @@ for method, GNN_model in product(methods, GNN_models):
         max_valid_acc = 0
 
         for epoch in tqdm(range(num_epochs)):
-            train_loss = train(model, data, train_mask)
+            train_loss = train(model, data, train_mask, optimizer)
             valid_acc = valid(model, data, valid_mask)
 
             if valid_acc > max_valid_acc:
@@ -658,7 +463,7 @@ for method, GNN_model in product(methods, GNN_models):
                 accuracy(output, data, test_mask)
             )
             results[method][GNN_model]["Trans"]["Avg Size"]["All"].append(
-                avg_set_size(pred_sets, test_mask)
+                avg_set_size(pred_sets)
             )
             coverage_value = coverage(pred_sets, data, test_mask)
             results[method][GNN_model]["Trans"]["Coverage"]["All"].append(
@@ -697,7 +502,7 @@ for method, GNN_model in product(methods, GNN_models):
                     accuracy(output, data, test_mask_t)
                 )
                 results[method][GNN_model]["Trans"]["Avg Size"][t].append(
-                    avg_set_size(pred_sets_t, test_mask_t)
+                    avg_set_size(pred_sets_t)
                 )
                 results[method][GNN_model]["Trans"]["Coverage"][t].append(
                     coverage(pred_sets_t, data, test_mask_t)
@@ -744,7 +549,7 @@ for method, GNN_model in product(methods, GNN_models):
         max_valid_acc = 0
 
         for epoch in tqdm(range(num_epochs)):
-            train_loss = train(model, data, train_mask)
+            train_loss = train(model, data, train_mask, optimizer)
             valid_acc = valid(model, data, valid_mask)
 
             if valid_acc > max_valid_acc:
@@ -763,7 +568,7 @@ for method, GNN_model in product(methods, GNN_models):
             accuracy(output, data, test_mask)
         )
         results[method][GNN_model]["Semi-Ind"]["Avg Size"]["All"].append(
-            avg_set_size(pred_sets, test_mask)
+            avg_set_size(pred_sets)
         )
         coverage_value = coverage(pred_sets, data, test_mask)
         results[method][GNN_model]["Semi-Ind"]["Coverage"]["All"].append(coverage_value)
@@ -800,7 +605,7 @@ for method, GNN_model in product(methods, GNN_models):
                 accuracy(output, data, test_mask_t)
             )
             results[method][GNN_model]["Semi-Ind"]["Avg Size"][t].append(
-                avg_set_size(pred_sets_t, test_mask_t)
+                avg_set_size(pred_sets_t)
             )
             results[method][GNN_model]["Semi-Ind"]["Coverage"][t].append(
                 coverage(pred_sets_t, data, test_mask_t)
