@@ -5,7 +5,7 @@ from ugnn.utils.masks import mask_split, mask_mix
 def test_mask_split():
     mask = np.array([[True, True], [True, False]])
     split_props = [0.5, 0.5]
-    split_masks = mask_split(mask, split_props, seed=42, mode="transductive")
+    split_masks = mask_split(mask, split_props, seed=42, regime="transductive")
     assert split_masks.shape == (2, 4)
     assert np.sum(split_masks[0]) + np.sum(split_masks[1]) == np.sum(mask)
 

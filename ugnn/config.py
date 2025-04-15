@@ -1,16 +1,38 @@
 import numpy as np
 
+# EXPERIMENT_PARAMS = {
+#     "num_epochs": 200,
+#     "learning_rate": 0.01,
+#     "weight_decay": 5e-4,
+#     "num_channels_GCN": 16,
+#     "num_channels_GAT": 16,
+#     "alpha": 0.1,
+#     "props": [0.5, 0.3, 0.1, 0.1],
+#     "num_train_trans": 10,
+#     "num_permute_trans": 100,
+#     "num_train_semi_ind": 50,
+# "methods": ["BD", "UA"],
+# "GNN_models": ["GCN", "GAT"],
+# "regimes": ["semi-inductive", "transductive", "assisted semi-inductive"],
+# "outputs": ["Accuracy", "Avg Size", "Coverage"],
+# }
+
+# MINIMAL EXPERIMENT
 EXPERIMENT_PARAMS = {
-    "num_epochs": 200,
+    "num_epochs": 10,
     "learning_rate": 0.01,
     "weight_decay": 5e-4,
     "num_channels_GCN": 16,
     "num_channels_GAT": 16,
     "alpha": 0.1,
     "props": [0.5, 0.3, 0.1, 0.1],
-    "num_train_trans": 10,
-    "num_permute_trans": 100,
-    "num_train_semi_ind": 50,
+    "num_train_trans": 5,
+    "num_permute_trans": 5,
+    "num_train_semi_ind": 5,
+    "methods": ["UA"],
+    "GNN_models": ["GCN"],
+    "regimes": ["semi-inductive"],
+    "outputs": ["Accuracy", "Avg Size", "Coverage"],
 }
 
 

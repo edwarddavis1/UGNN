@@ -49,3 +49,6 @@ htmlcov/
 *.bak
 *.orig
 *.rej
+
+# Results of code analysis
+results/

@@ -10,46 +10,54 @@ from ugnn.utils.masks import mask_mix
 
 
 class Experiment:
-    def __init__(self, method, GNN_model, mode, data, masks, params):
+    def __init__(
+        self, method, GNN_model, regime, data, masks, experiment_params, data_params
+    ):
         """
-        Initialize the experiment.
+        Initialise the experiment.
 
         Args:
             method (str): The method (e.g., "BD" or "UA").
             GNN_model (str): The GNN model (e.g., "GCN" or "GAT").
-            mode (str): The experiment mode (e.g., "assisted semi-inductive", "transductive", "semi-inductive").
+            regime (str): The experiment regime (e.g., "assisted semi-inductive", "transductive", "semi-inductive").
             data: The dataset object.
             masks (dict): Dictionary containing train, valid, calib, and test masks.
             params (dict): Dictionary of experiment parameters (e.g., num_epochs, alpha, etc.).
         """
         self.method = method
         self.GNN_model = GNN_model
-        self.mode = mode
+        self.regime = regime
         self.data = data
         self.masks = masks
-        self.params = params
+        self.params = experiment_params
+
+        # Data params
+        self.n = data_params["n"]
+        self.T = data_params["T"]
+        self.num_classes = data_params["num_classes"]
+
         self.results = {
-            "Accuracy": {"All": [], "Per Time": {t: [] for t in range(params["T"])}},
-            "Avg Size": {"All": [], "Per Time": {t: [] for t in range(params["T"])}},
-            "Coverage": {"All": [], "Per Time": {t: [] for t in range(params["T"])}},
+            "Accuracy": {"All": [], "Per Time": {t: [] for t in range(self.T)}},
+            "Avg Size": {"All": [], "Per Time": {t: [] for t in range(self.T)}},
+            "Coverage": {"All": [], "Per Time": {t: [] for t in range(self.T)}},
         }
 
-    def initialize_model(self):
+    def initialise_model(self):
         """
-        Initialize the GNN model based on the specified type.
+        initialise the GNN model based on the specified type.
         """
         if self.GNN_model == "GCN":
             return GCN(
                 self.data.num_nodes,
                 self.params["num_channels_GCN"],
-                self.params["num_classes"],
+                self.num_classes,
                 seed=0,
             )
         elif self.GNN_model == "GAT":
             return GAT(
                 self.data.num_nodes,
                 self.params["num_channels_GAT"],
-                self.params["num_classes"],
+                self.num_classes,
                 seed=0,
             )
 
@@ -57,7 +65,7 @@ class Experiment:
         """
         Train the GNN model.
         """
-        model = self.initialize_model()
+        model = self.initialise_model()
         optimizer = torch.optim.Adam(
             model.parameters(),
             lr=self.params["learning_rate"],
@@ -65,7 +73,7 @@ class Experiment:
         )
         max_valid_acc = 0
 
-        print(f"\nTraining {self.method} {self.GNN_model} in {self.mode} mode")
+        print(f"\nTraining {self.method} {self.GNN_model} in {self.regime} regime")
         for epoch in tqdm(range(self.params["num_epochs"])):
             train_loss = train(model, self.data, self.masks["train"], optimizer)
             valid_acc = valid(model, self.data, self.masks["valid"])
@@ -80,10 +88,10 @@ class Experiment:
         """
         Evaluate the trained model and compute metrics.
         """
-        print(f"Evaluating {self.method} {self.GNN_model} in {self.mode} mode")
+        print(f"Evaluating {self.method} {self.GNN_model} in {self.regime} regime")
         output = self.best_model(self.data.x, self.data.edge_index)
 
-        if self.mode != "semi-inductive":
+        if self.regime != "semi-inductive":
             for j in tqdm(range(self.params["num_permute_trans"])):
                 calib_mask, test_mask = mask_mix(
                     self.masks["calib"], self.masks["test"], seed=j
@@ -125,7 +133,7 @@ class Experiment:
             coverage(pred_sets, self.data, test_mask)
         )
 
-        for t in range(self.params["T"]):
+        for t in range(self.T):
             test_mask_t = self._get_time_mask(test_mask, t)
             if np.sum(test_mask_t) == 0:
                 continue
@@ -154,15 +162,11 @@ class Experiment:
             np.ndarray: Time-specific test mask.
         """
         if self.method == "BD":
-            time_mask = np.array(
-                [[False] * self.params["n"] for _ in range(self.params["T"])]
-            )
+            time_mask = np.array([[False] * self.n for _ in range(self.T)])
             time_mask[t] = True
             time_mask = time_mask.reshape(-1)
         elif self.method == "UA":
-            time_mask = np.array(
-                [[False] * self.params["n"] for _ in range(self.params["T"] + 1)]
-            )
+            time_mask = np.array([[False] * self.n for _ in range(self.T + 1)])
             time_mask[t + 1] = True
             time_mask = time_mask.reshape(-1)
         return time_mask * test_mask

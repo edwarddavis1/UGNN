@@ -19,12 +19,12 @@ def non_zero_degree_mask(As, n, T):
     return data_mask
 
 
-def mask_split(mask, split_props, seed=0, mode="transductive"):
+def mask_split(mask, split_props, seed=0, regime="transductive"):
     np.random.seed(seed)
 
     n, T = mask.shape
 
-    if mode == "transductive":
+    if regime == "transductive":
         flat_mask = mask.T.reshape(-1)
         n_masks = np.sum(flat_mask)
 
@@ -33,7 +33,7 @@ def mask_split(mask, split_props, seed=0, mode="transductive"):
         split_ns = np.cumsum([round(n_masks * prop) for prop in split_props[:-1]])
         split_idx = np.split(flat_mask_idx, split_ns)
 
-    elif mode == "semi-inductive":
+    elif regime == "semi-inductive":
         T_trunc = np.where(
             np.cumsum(np.sum(mask, axis=0) / np.sum(mask)) >= 1 - split_props[-1]
         )[0][0]
@@ -51,7 +51,7 @@ def mask_split(mask, split_props, seed=0, mode="transductive"):
         split_idx = np.split(flat_mask_start_idx, split_ns)
         split_idx.append(n * T_trunc + np.where(flat_mask_end)[0])
 
-    elif mode == "assisted semi-inductive":
+    elif regime == "assisted semi-inductive":
         T_trunc = np.where(
             np.cumsum(np.sum(mask, axis=0) / np.sum(mask)) >= 1 - split_props[-1]
         )[0][0]
