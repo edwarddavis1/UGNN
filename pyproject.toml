@@ -12,7 +12,6 @@ dependencies = [
     "numpy>=2.2.4",
     "pyemb==1.0.0a13",
     "pytest>=8.3.5",
-    "scipy>=1.14.0",
     "torch>=2.6.0",
     "torch-geometric>=2.6.1",
 ]

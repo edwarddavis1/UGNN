@@ -1,17 +1,21 @@
 import os
 from datetime import datetime
 import pickle
+from ugnn.config import ROOT_DIR
 
 
 class ResultsManager:
-    def __init__(self, experiment_name, base_dir="results"):
+    def __init__(self, experiment_name):
         """
         Initialize the ResultsManager.
 
         Args:
             experiment_name (str): Name of the experiment.
-            base_dir (str): Base directory for saving results.
+            base_dir (str): Base directory for saving results. Defaults to 'results/' in the project root.
         """
+        # Ensure results are saved in UGNN/results
+        base_dir = os.path.join(ROOT_DIR, "../results")
+
         self.experiment_name = experiment_name
         self.base_dir = base_dir
         self.results_dir = f"{base_dir}/{experiment_name}"

@@ -1498,7 +1498,6 @@ dependencies = [
     { name = "numpy" },
     { name = "pyemb" },
     { name = "pytest" },
-    { name = "scipy" },
     { name = "torch" },
     { name = "torch-geometric" },
 ]
@@ -1509,7 +1508,6 @@ requires-dist = [
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "pyemb", specifier = "==1.0.0a13" },
     { name = "pytest", specifier = ">=8.3.5" },
-    { name = "scipy", specifier = ">=1.14.0" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "torch-geometric", specifier = ">=2.6.1" },
 ]
