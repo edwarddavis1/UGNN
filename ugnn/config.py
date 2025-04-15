@@ -29,11 +29,11 @@ EXPERIMENT_PARAMS = {
     "num_channels_GAT": 16,
     "alpha": 0.1,
     "props": [0.5, 0.3, 0.1, 0.1],
-    "num_train_trans": 1,
-    "num_permute_trans": 1,
-    "num_train_semi_ind": 1,
-    "methods": ["UA"],
-    "GNN_models": ["GCN"],
+    "num_train_trans": 5,
+    "num_permute_trans": 5,
+    "num_train_semi_ind": 5,
+    "methods": ["BD", "UA"],
+    "GNN_models": ["GCN", "GAT"],
     "regimes": ["semi-inductive"],
     "outputs": ["Accuracy", "Avg Size", "Coverage"],
 }
@@ -61,6 +61,9 @@ def validate_params(params):
         )
     if np.sum(params["props"]) != 1:
         raise ValueError("props must sum to 1.")
+
+    if not all(method in ["BD", "UA"] for method in params["methods"]):
+        raise ValueError("methods must be either 'BD' or 'UA'.")
 
 
 validate_params(EXPERIMENT_PARAMS)

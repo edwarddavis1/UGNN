@@ -86,56 +86,17 @@ DATA_PARAMS = {
 # %%
 # Remove nodes with zero degree for each time point
 data_mask = non_zero_degree_mask(As, n, T)
-
-# Randomly separate remaining nodes according to data split proportions and regime
-train_mask, valid_mask, calib_mask, test_mask = mask_split(
-    data_mask, props, regime="semi-inductive"
-)
-
-# %%
-results = {}
-
-# methods = ["BD", "UA"]
-# GNN_models = ["GCN", "GAT"]
-# regimes = ["Assisted Semi-Ind", "Trans", "Semi-Ind"]
-# # regimes = ["Trans", "Semi-Ind"]
-# outputs = ["Accuracy", "Avg Size", "Coverage"]
-times = ["All"] + list(range(T))
-
-for method in methods:
-    results[method] = {}
-
-    for GNN_model in GNN_models:
-        results[method][GNN_model] = {}
-
-        for regime in regimes:
-            results[method][GNN_model][regime] = {}
-
-            for output in outputs:
-                results[method][GNN_model][regime][output] = {}
-
-                for time in times:
-                    results[method][GNN_model][regime][output][time] = []
-
 # %%
 
 regime = "semi-inductive"
-
-# REMOVE THIS
-method = methods[0]
-GNN_model = GNN_models[0]
-i = 0
 
 res = ResultsManager(
     experiment_name=experiment_name,
 )
 
-
 for method, GNN_model in product(methods, GNN_models):
-
     for i in range(num_train_semi_ind):
-
-        # Split data into training/validation/calibration/test
+        # Randomly separate remaining nodes according to data split proportions and regime
         train_mask, valid_mask, calib_mask, test_mask = mask_split(
             data_mask, props, seed=i, regime=regime
         )
@@ -143,7 +104,7 @@ for method, GNN_model in product(methods, GNN_models):
         if method == "BD":
             method_str = "Block Diagonal"
             data = dataset_BD
-        if method == "UA":
+        elif method == "UA":
             method_str = "Unfolded"
             data = dataset_UA
             # Pad masks to include anchor nodes
@@ -151,6 +112,8 @@ for method, GNN_model in product(methods, GNN_models):
             valid_mask = np.concatenate((np.array([False] * n), valid_mask))
             calib_mask = np.concatenate((np.array([False] * n), calib_mask))
             test_mask = np.concatenate((np.array([False] * n), test_mask))
+        else:
+            raise ValueError(f"Unknown method: {method}")
 
         # Initialise the experiment
         exp = Experiment(
@@ -176,129 +139,133 @@ for method, GNN_model in product(methods, GNN_models):
         # Compute prediction sets and evaluate performance
         exp.evaluate()
 
+        # Add this experiment run to the results manager
+        res.add_result(exp)
 
-res.save_results(exp.results)
-
+# Save all the results
+# res.save_results()
 
 # %%
 
-# for method, GNN_model in product(methods, GNN_models):
+# # ##########################################################################################
+# # ##########################################################################################
+# # ##########################################################################################
+# # ##########################################################################################
 
-#     for i in range(num_train_semi_ind):
-#         # Split data into training/validation/calibration/test
-#         train_mask, valid_mask, calib_mask, test_mask = mask_split(
-#             data_mask, props, seed=i, regime="semi-inductive"
-#         )
+# import pandas as pd
 
-#         if method == "BD":
-#             method_str = "Block Diagonal"
-#             data = dataset_BD
-#         if method == "UA":
-#             method_str = "Unfolded"
-#             data = dataset_UA
-#             # Pad masks to include anchor nodes
-#             train_mask = np.concatenate((np.array([False] * n), train_mask))
-#             valid_mask = np.concatenate((np.array([False] * n), valid_mask))
-#             calib_mask = np.concatenate((np.array([False] * n), calib_mask))
-#             test_mask = np.concatenate((np.array([False] * n), test_mask))
+# assert regime == "semi-inductive"
+# num_vals = EXPERIMENT_PARAMS["num_train_semi_ind"]
 
-#         if GNN_model == "GCN":
-#             model = GCN(data.num_nodes, num_channels_GCN, num_classes, seed=i)
-#         if GNN_model == "GAT":
-#             model = GAT(data.num_nodes, num_channels_GAT, num_classes, seed=i)
-
-#         optimizer = torch.optim.Adam(
-#             model.parameters(), lr=learning_rate, weight_decay=weight_decay
-#         )
-
-#         print(f"\nTraining {method_str} {GNN_model} Number {i}")
-#         max_valid_acc = 0
-
-#         for epoch in tqdm(range(num_epochs)):
-#             train_loss = train(model, data, train_mask, optimizer)
-#             valid_acc = valid(model, data, valid_mask)
-
-#             if valid_acc > max_valid_acc:
-#                 max_valid_acc = valid_acc
-#                 best_model = copy.deepcopy(model)
-
-#         print(f"Evaluating {method_str} {GNN_model} Number {i}")
-#         print(f"Validation accuracy: {max_valid_acc:0.3f}")
-#         output = best_model(data.x, data.edge_index)
-
-#         # Cannot permute the calibration and test datasets in semi-inductive experiments
-
-#         pred_sets = get_prediction_sets(
-#             output, data, calib_mask, test_mask, alpha, method="APS"
-#         )
-
-#         results[method][GNN_model]["Semi-Ind"]["Accuracy"]["All"].append(
-#             accuracy(output, data, test_mask)
-#         )
-#         results[method][GNN_model]["Semi-Ind"]["Avg Size"]["All"].append(
-#             avg_set_size(pred_sets)
-#         )
-#         coverage_value = coverage(pred_sets, data, test_mask)
-#         results[method][GNN_model]["Semi-Ind"]["Coverage"]["All"].append(coverage_value)
-#         print(f"Coverage: {coverage_value:0.3f}")
-
-#         for t in range(T):
-#             # Consider test nodes only at time t
-#             if method == "BD":
-#                 time_mask = np.array([[False] * n for _ in range(T)])
-#                 time_mask[t] = True
-#                 time_mask = time_mask.reshape(-1)
-#             if method == "UA":
-#                 time_mask = np.array([[False] * n for _ in range(T + 1)])
-#                 time_mask[t + 1] = True
-#                 time_mask = time_mask.reshape(-1)
-
-#             test_mask_t = time_mask * test_mask
-#             if np.sum(test_mask_t) == 0:
-#                 continue
-
-#             # Get prediction sets corresponding to time t
-#             pred_sets_t = pred_sets[
-#                 np.array(
-#                     [
-#                         np.where(np.where(test_mask)[0] == np.where(test_mask_t)[0][i])[
-#                             0
-#                         ][0]
-#                         for i in range(sum(test_mask_t))
-#                     ]
-#                 )
-#             ]
-
-#             results[method][GNN_model]["Semi-Ind"]["Accuracy"][t].append(
-#                 accuracy(output, data, test_mask_t)
-#             )
-#             results[method][GNN_model]["Semi-Ind"]["Avg Size"][t].append(
-#                 avg_set_size(pred_sets_t)
-#             )
-#             results[method][GNN_model]["Semi-Ind"]["Coverage"][t].append(
-#                 coverage(pred_sets_t, data, test_mask_t)
-#             )
-
-#         avg_test_acc = np.mean(
-#             results[method][GNN_model]["Semi-Ind"]["Accuracy"]["All"]
-#         )
-#         print(f"Test accuracy: {avg_test_acc:0.3f}")
-
-# # %% [markdown]
-# # Save results to pickle file.
+# results = res.all
 
 # # %%
-# with open(results_file, "wb") as file:
-#     pickle.dump(results, file)
+
+# # %%
+
+# # method = methods[0]
+# # GNN_model = GNN_models[0]
+# # regime = regimes[0]
+# # output = outputs[0]
+
+# # methods_list = []
+# # GNN_models_list = []
+# # regimes_list = []
+# # outputs_list = []
+# # stat_types_list = []
+# # stats_list = []
+
+# # for method, GNN_model, regime, output in product(methods, GNN_models, regimes, outputs):
+# #     methods_list.append(method)
+# #     GNN_models_list.append(GNN_model)
+# #     regimes_list.append(regime)
+# #     outputs_list.append(output)
+# #     stat_types_list.append("Mean")
+# #     stats_list.append(
+# #         np.round(np.mean(results[method][GNN_model][regime][output]["All"]), 3)
+# #     )
+
+# #     methods_list.append(method)
+# #     GNN_models_list.append(GNN_model)
+# #     regimes_list.append(regime)
+# #     outputs_list.append(output)
+# #     stat_types_list.append("St Dev")
+# #     stats_list.append(
+# #         np.round(np.std(results[method][GNN_model][regime][output]["All"]), 3)
+# #     )
+
+# #     output = "TSC"
+# #     for method, GNN_model, regime in product(methods, GNN_models, regimes):
+
+# #         T_output = np.where(
+# #             np.array(
+# #                 [
+# #                     len(results[method][GNN_model][regime]["Coverage"][t])
+# #                     for t in range(T)
+# #                 ]
+# #             )
+# #             > 0
+# #         )[0]
+
+# #         covs = np.zeros((T, num_vals))
+# #         for t in T_output:
+# #             covs[t] = results[method][GNN_model][regime]["Coverage"][t]
+
+# #         # min_covs = []
+# #         # for cov_run in range(num_vals):
+# #         #     covs_for_run = covs[:, cov_run]
+# #         #     covs_for_run = covs_for_run[covs_for_run > 0]
+# #         #     min_covs.append(np.min(covs_for_run))
+
+# #         TSC = []
+# #         for t in T_output:
+# #             TSC.append(np.mean(covs[t, :]))
+
+# #         min_TSC_idx = np.argmin(TSC)
+# #         min_TSC = TSC[min_TSC_idx]
+# #         std_min_TSC = np.std(covs[T_output[min_TSC_idx], :])
+
+# #     methods_list.append(method)
+# #     GNN_models_list.append(GNN_model)
+# #     regimes_list.append(regime)
+# #     outputs_list.append(output)
+# #     stat_types_list.append("Mean")
+# #     stats_list.append(np.round(min_TSC, 3))
+
+# #     methods_list.append(method)
+# #     GNN_models_list.append(GNN_model)
+# #     regimes_list.append(regime)
+# #     outputs_list.append(output)
+# #     stat_types_list.append("St Dev")
+# #     stats_list.append(np.round(std_min_TSC, 3))
 
 
-# # # Save results
-# # def save_results(params, metrics, file_path):
-# #     results = {"parameters": params, "metrics": metrics}
-# #     with open(file_path, "wb") as f:
-# #         pickle.dump(results, f)
+# # df_summary = pd.DataFrame(
+# #     {
+# #         "method": methods_list,
+# #         "GNN model": GNN_models_list,
+# #         "regime": regimes_list,
+# #         "output": outputs_list,
+# #         "statistic": stat_types_list,
+# #         "value": stats_list,
+# #     }
+# # )
+
+# # # %%
+# # df_summary["name"] = df_summary["method"] + " " + df_summary["GNN model"]
+
+# # replace_dict = {
+# #     "BD GCN": "Block GCN",
+# #     "BD GAT": "Block GAT",
+# #     "UA GCN": "UGCN",
+# #     "UA GAT": "UGAT",
+# # }
+
+# # df_summary["name"] = df_summary["name"].replace(replace_dict)
 
 
-# # # Run and save experiment
-# # metrics = run_experiment(EXPERIMENT_PARAMS)
-# # save_results(EXPERIMENT_PARAMS, metrics, results_file)
+# # # %% [markdown]
+# # # Display full table of statistics.
+
+# # # %%
+# # print(df_summary)
