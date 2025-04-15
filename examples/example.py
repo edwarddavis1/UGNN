@@ -146,126 +146,27 @@ for method, GNN_model in product(methods, GNN_models):
 # res.save_results()
 
 # %%
+# Quickly just print out the results for the semi-inductive regime
+# So can make sure that the results look correct
 
-# # ##########################################################################################
-# # ##########################################################################################
-# # ##########################################################################################
-# # ##########################################################################################
+import pandas as pd
 
-# import pandas as pd
+assert regime == "semi-inductive"
+num_vals = EXPERIMENT_PARAMS["num_train_semi_ind"]
 
-# assert regime == "semi-inductive"
-# num_vals = EXPERIMENT_PARAMS["num_train_semi_ind"]
+all_time_results = pd.DataFrame(res.all)
+all_time_results = all_time_results[all_time_results["Time"] == "All"].drop(
+    columns=["Time"]
+)
 
-# results = res.all
+# Group by the unique triples (method, GNN_model, regime)
+grouped = all_time_results.groupby(["Method", "GNN Model", "Regime"])
+aggregated_results = (
+    grouped[["Accuracy", "Avg Size", "Coverage"]].agg(["mean", "std"]).reset_index()
+)
+aggregated_results.columns = [
+    "_".join(col).strip("_") for col in aggregated_results.columns
+]
 
-# # %%
-
-# # %%
-
-# # method = methods[0]
-# # GNN_model = GNN_models[0]
-# # regime = regimes[0]
-# # output = outputs[0]
-
-# # methods_list = []
-# # GNN_models_list = []
-# # regimes_list = []
-# # outputs_list = []
-# # stat_types_list = []
-# # stats_list = []
-
-# # for method, GNN_model, regime, output in product(methods, GNN_models, regimes, outputs):
-# #     methods_list.append(method)
-# #     GNN_models_list.append(GNN_model)
-# #     regimes_list.append(regime)
-# #     outputs_list.append(output)
-# #     stat_types_list.append("Mean")
-# #     stats_list.append(
-# #         np.round(np.mean(results[method][GNN_model][regime][output]["All"]), 3)
-# #     )
-
-# #     methods_list.append(method)
-# #     GNN_models_list.append(GNN_model)
-# #     regimes_list.append(regime)
-# #     outputs_list.append(output)
-# #     stat_types_list.append("St Dev")
-# #     stats_list.append(
-# #         np.round(np.std(results[method][GNN_model][regime][output]["All"]), 3)
-# #     )
-
-# #     output = "TSC"
-# #     for method, GNN_model, regime in product(methods, GNN_models, regimes):
-
-# #         T_output = np.where(
-# #             np.array(
-# #                 [
-# #                     len(results[method][GNN_model][regime]["Coverage"][t])
-# #                     for t in range(T)
-# #                 ]
-# #             )
-# #             > 0
-# #         )[0]
-
-# #         covs = np.zeros((T, num_vals))
-# #         for t in T_output:
-# #             covs[t] = results[method][GNN_model][regime]["Coverage"][t]
-
-# #         # min_covs = []
-# #         # for cov_run in range(num_vals):
-# #         #     covs_for_run = covs[:, cov_run]
-# #         #     covs_for_run = covs_for_run[covs_for_run > 0]
-# #         #     min_covs.append(np.min(covs_for_run))
-
-# #         TSC = []
-# #         for t in T_output:
-# #             TSC.append(np.mean(covs[t, :]))
-
-# #         min_TSC_idx = np.argmin(TSC)
-# #         min_TSC = TSC[min_TSC_idx]
-# #         std_min_TSC = np.std(covs[T_output[min_TSC_idx], :])
-
-# #     methods_list.append(method)
-# #     GNN_models_list.append(GNN_model)
-# #     regimes_list.append(regime)
-# #     outputs_list.append(output)
-# #     stat_types_list.append("Mean")
-# #     stats_list.append(np.round(min_TSC, 3))
-
-# #     methods_list.append(method)
-# #     GNN_models_list.append(GNN_model)
-# #     regimes_list.append(regime)
-# #     outputs_list.append(output)
-# #     stat_types_list.append("St Dev")
-# #     stats_list.append(np.round(std_min_TSC, 3))
-
-
-# # df_summary = pd.DataFrame(
-# #     {
-# #         "method": methods_list,
-# #         "GNN model": GNN_models_list,
-# #         "regime": regimes_list,
-# #         "output": outputs_list,
-# #         "statistic": stat_types_list,
-# #         "value": stats_list,
-# #     }
-# # )
-
-# # # %%
-# # df_summary["name"] = df_summary["method"] + " " + df_summary["GNN model"]
-
-# # replace_dict = {
-# #     "BD GCN": "Block GCN",
-# #     "BD GAT": "Block GAT",
-# #     "UA GCN": "UGCN",
-# #     "UA GAT": "UGAT",
-# # }
-
-# # df_summary["name"] = df_summary["name"].replace(replace_dict)
-
-
-# # # %% [markdown]
-# # # Display full table of statistics.
-
-# # # %%
-# # print(df_summary)
+print("\n\n")
+print(aggregated_results)
