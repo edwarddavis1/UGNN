@@ -145,19 +145,11 @@ for method, GNN_model, regime in product(methods, GNN_models, regimes):
 res.save_results()
 
 # %%
-# Quickly just print out the results for the semi-inductive regime
-# So can make sure that the results look correct
 
-
-assert regime == "semi-inductive"
-num_vals = EXPERIMENT_PARAMS["num_train_semi_ind"]
-
-all_time_results = pd.DataFrame(res.all)
+all_time_results = res.return_df()
 all_time_results = all_time_results[all_time_results["Time"] == "All"].drop(
     columns=["Time"]
 )
-
-# Group by the unique triples (method, GNN_model, regime)
 grouped = all_time_results.groupby(["Method", "GNN Model", "Regime"])
 aggregated_results = (
     grouped[["Accuracy", "Avg Size", "Coverage"]].agg(["mean", "std"]).reset_index()
@@ -168,3 +160,7 @@ aggregated_results.columns = [
 
 print("\n\n")
 print(aggregated_results)
+
+# %%
+aggregated_results.sort_values(by=["Regime", "GNN Model", "Method"], inplace=True)
+aggregated_results

@@ -116,3 +116,14 @@ class ResultsManager:
         with open(self.results_file, "wb") as f:
             pickle.dump(self.all, f)
         print(f"Results saved to {self.results_file}")
+
+    def return_df(self):
+        """
+        Return the results as a DataFrame.
+
+        Returns:
+            pd.DataFrame: The results DataFrame.
+        """
+        import pandas as pd
+
+        return pd.DataFrame(self.all)

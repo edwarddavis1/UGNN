@@ -4,41 +4,41 @@ from ugnn.types import ExperimentParams
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# EXPERIMENT_PARAMS: ExperimentParams = {
-#     "num_epochs": 200,
-#     "learning_rate": 0.01,
-#     "weight_decay": 5e-4,
-#     "num_channels_GCN": 16,
-#     "num_channels_GAT": 16,
-#     "alpha": 0.1,
-#     "props": [0.5, 0.3, 0.1, 0.1],
-#     "num_train_trans": 10,
-#     "num_permute_trans": 100,
-#     "num_train_semi_ind": 50,
-#     "methods": ["BD", "UA"],
-#     "GNN_models": ["GCN", "GAT"],
-#     # "regimes": ["semi-inductive", "transductive", "temporal transductive"],
-#     "regimes": ["semi-inductive"],
-#     "outputs": ["Accuracy", "Avg Size", "Coverage"],
-# }
-
-# MINIMAL EXPERIMENT
 EXPERIMENT_PARAMS: ExperimentParams = {
-    "num_epochs": 10,
+    "num_epochs": 200,
     "learning_rate": 0.01,
     "weight_decay": 5e-4,
     "num_channels_GCN": 16,
     "num_channels_GAT": 16,
     "alpha": 0.1,
     "props": [0.5, 0.3, 0.1, 0.1],
-    "num_train_trans": 5,
-    "num_permute_trans": 5,
-    "num_train_semi_ind": 5,
+    "num_train_trans": 10,
+    "num_permute_trans": 100,
+    "num_train_semi_ind": 50,
     "methods": ["BD", "UA"],
     "GNN_models": ["GCN", "GAT"],
-    "regimes": ["semi-inductive"],
+    # "regimes": ["semi-inductive", "transductive", "temporal transductive"],
+    "regimes": ["transductive"],
     "outputs": ["Accuracy", "Avg Size", "Coverage"],
 }
+
+# # MINIMAL EXPERIMENT
+# EXPERIMENT_PARAMS: ExperimentParams = {
+#     "num_epochs": 10,
+#     "learning_rate": 0.01,
+#     "weight_decay": 5e-4,
+#     "num_channels_GCN": 16,
+#     "num_channels_GAT": 16,
+#     "alpha": 0.1,
+#     "props": [0.5, 0.3, 0.1, 0.1],
+#     "num_train_trans": 5,
+#     "num_permute_trans": 5,
+#     "num_train_semi_ind": 5,
+#     "methods": ["BD", "UA"],
+#     "GNN_models": ["GCN", "GAT"],
+#     "regimes": ["semi-inductive", "transductive"],
+#     "outputs": ["Accuracy", "Avg Size", "Coverage"],
+# }
 
 
 def validate_params(params):
