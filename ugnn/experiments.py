@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 import copy
-from tqdm import tqdm
 
 from ugnn.gnns import GCN, GAT, train, valid
 from ugnn.utils.metrics import accuracy, avg_set_size, coverage
@@ -73,9 +72,9 @@ class Experiment:
         )
         max_valid_acc = 0
 
-        print(f"\nTraining {self.method} {self.GNN_model} in {self.regime} regime")
-        for epoch in tqdm(range(self.params["num_epochs"])):
-            train_loss = train(model, self.data, self.masks["train"], optimizer)
+        # print(f"\nTraining {self.method} {self.GNN_model} in {self.regime} regime")
+        for epoch in range(self.params["num_epochs"]):
+            _ = train(model, self.data, self.masks["train"], optimizer)
             valid_acc = valid(model, self.data, self.masks["valid"])
 
             if valid_acc > max_valid_acc:
@@ -88,11 +87,11 @@ class Experiment:
         """
         Evaluate the trained model and compute metrics.
         """
-        print(f"Evaluating {self.method} {self.GNN_model} in {self.regime} regime")
+        # print(f"Evaluating {self.method} {self.GNN_model} in {self.regime} regime")
         output = self.best_model(self.data.x, self.data.edge_index)
 
         if self.regime != "semi-inductive":
-            for j in tqdm(range(self.params["num_permute_trans"])):
+            for j in range(self.params["num_permute_trans"]):
                 calib_mask, test_mask = mask_mix(
                     self.masks["calib"], self.masks["test"], seed=j
                 )

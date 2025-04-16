@@ -90,7 +90,6 @@ def mask_mix(mask_1, mask_2, seed=0):
 
     n = len(mask_1)
     n1 = np.sum(mask_1)
-    n2 = np.sum(mask_2)
 
     mask_idx = np.where(mask_1 + mask_2)[0]
     np.random.shuffle(mask_idx)

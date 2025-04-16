@@ -35,7 +35,9 @@ def avg_set_size(pred_sets: np.ndarray) -> float:
     return np.mean(np.sum(pred_sets, axis=1))
 
 
-def coverage(pred_sets: np.ndarray, data: Data, test_mask: np.ndarray) -> float:
+def coverage(
+    pred_sets: np.ndarray[np.bool_], data: Data, test_mask: np.ndarray
+) -> float:
     """
     Calculate the coverage of prediction sets.
 

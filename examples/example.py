@@ -1,21 +1,15 @@
 # %%
-import copy
 from itertools import product
 import numpy as np
-import pickle
 import pyemb as eb
 from tqdm import tqdm
 import os
 from datetime import datetime
-
-import torch
+import pandas as pd
 
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
-from ugnn.gnns import GCN, GAT, train, valid
-from ugnn.utils.metrics import accuracy, avg_set_size, coverage
 from ugnn.config import EXPERIMENT_PARAMS
-from ugnn.utils.masks import mask_split, mask_mix, non_zero_degree_mask
-from ugnn.conformal import get_prediction_sets
+from ugnn.utils.masks import mask_split, non_zero_degree_mask
 from ugnn.experiments import Experiment
 from ugnn.results_manager import ResultsManager
 
@@ -95,7 +89,10 @@ res = ResultsManager(
 )
 
 for method, GNN_model in product(methods, GNN_models):
-    for i in range(num_train_semi_ind):
+    print(
+        f"Running experiment for method: {method}, GNN model: {GNN_model}, regime: {regime}"
+    )
+    for i in tqdm(range(num_train_semi_ind)):
         # Randomly separate remaining nodes according to data split proportions and regime
         train_mask, valid_mask, calib_mask, test_mask = mask_split(
             data_mask, props, seed=i, regime=regime
@@ -143,13 +140,12 @@ for method, GNN_model in product(methods, GNN_models):
         res.add_result(exp)
 
 # Save all the results
-# res.save_results()
+res.save_results()
 
 # %%
 # Quickly just print out the results for the semi-inductive regime
 # So can make sure that the results look correct
 
-import pandas as pd
 
 assert regime == "semi-inductive"
 num_vals = EXPERIMENT_PARAMS["num_train_semi_ind"]

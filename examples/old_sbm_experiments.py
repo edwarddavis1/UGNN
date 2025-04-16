@@ -50,7 +50,7 @@ weight_decay = 5e-4
 # Save results
 # results_file = 'results/Conformal_GNN_SBM_Results_10_100_50.pkl'
 # results_file = 'results/Conformal_GNN_SBM_Results_10_100_50.pkl'
-results_file = f"results/SBM_with_less_test.pkl"
+results_file = "results/SBM_with_less_test.pkl"
 
 # %% [markdown]
 # ## Generate dataset
