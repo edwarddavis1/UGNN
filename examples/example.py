@@ -63,14 +63,6 @@ As, Z = eb.simulation.SBM(n, Bs, pi)
 node_labels = np.tile(Z, T)
 num_classes = K
 
-# %%
-# Convert the data from adjacency matrices and labels to torch geometric datasets
-# One for the block diagonal representation and one for the unfolded representation
-dataset = Dynamic_Network(As, node_labels)
-dataset_BD = Block_Diagonal_Network(dataset)[0]
-dataset_UA = Unfolded_Network(dataset)[0]
-
-# %%
 DATA_PARAMS = {
     "n": n,
     "T": T,
@@ -78,17 +70,26 @@ DATA_PARAMS = {
 }
 
 # %%
+# Convert the data from adjacency matrices and labels to a torch geometric dataset
+# This contains T separate graphs
+dataset = Dynamic_Network(As, node_labels)
+
+# Arrange the many graphs into a single graph, allowing the GNN to process at once
+dataset_BD = Block_Diagonal_Network(dataset)[0]  # Block diagonal representation
+dataset_UA = Unfolded_Network(dataset)[0]  # Unfolded representation
+
+
+# %%
 # Remove nodes with zero degree for each time point
 data_mask = non_zero_degree_mask(As, n, T)
-# %%
 
-regime = "semi-inductive"
-
+# Results manager object to keep track of each experiment run
 res = ResultsManager(
     experiment_name=experiment_name,
 )
 
-for method, GNN_model in product(methods, GNN_models):
+# Main experiment loop
+for method, GNN_model, regime in product(methods, GNN_models, regimes):
     print(
         f"Running experiment for method: {method}, GNN model: {GNN_model}, regime: {regime}"
     )

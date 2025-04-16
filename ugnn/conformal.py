@@ -15,14 +15,30 @@ def get_prediction_sets(
     method: Literal["APS"] = "APS",
 ) -> np.ndarray[np.bool_]:
     """
-    Takes the output of a model and computes the conformal prediction sets.
+    Computes conformal prediction sets from the model's output.
 
-    This first takes data points from the calibration set and computes a non-conformity score,
-    i.e. how "strange" a data-label pair is. Then it computes the quantile of the non-conformity
-    scores, which are then used to form the prediction sets for the test set.
+    This function uses data points from the calibration set to compute a non-conformity score,
+    which measures how "strange" a data-label pair is. It then calculates the quantile of the
+    non-conformity scores to form prediction sets for the test set.
 
-    Implemented methods:
-    - APS: Adaptive Prediction Sets
+    Args:
+        output (Tensor): The model's output logits or probabilities.
+        data (Data): The data object containing labels (`data.y`) and other graph-related information.
+        calib_mask (Tensor): A boolean mask indicating the calibration set.
+        test_mask (Tensor): A boolean mask indicating the test set.
+        alpha (float, optional): Error rate. Defaults to 0.1.
+        method (Literal["APS"], optional): The method to compute prediction sets. Currently, only
+            "APS" (Adaptive Prediction Sets) is implemented. Defaults to "APS".
+
+    Returns:
+        np.ndarray[np.bool_]: A binary NumPy array where each row corresponds to a test sample,
+        and each column indicates whether a class is included in the prediction set.
+
+    Raises:
+        NotImplementedError: If the specified method is "RAPS", which is not implemented.
+        ValueError: If an unknown method is specified.
+        ValueError: If the computed quantile is greater than 1, which indicates insufficient
+            calibration data or an invalid alpha value.
 
     """
     n_calib = calib_mask.sum().item()
