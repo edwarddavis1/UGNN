@@ -51,7 +51,7 @@ def mask_split(mask, split_props, seed=0, regime="transductive"):
         split_idx = np.split(flat_mask_start_idx, split_ns)
         split_idx.append(n * T_trunc + np.where(flat_mask_end)[0])
 
-    elif regime == "assisted semi-inductive":
+    elif regime == "temporal transductive":
         T_trunc = np.where(
             np.cumsum(np.sum(mask, axis=0) / np.sum(mask)) >= 1 - split_props[-1]
         )[0][0]

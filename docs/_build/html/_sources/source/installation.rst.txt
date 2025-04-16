@@ -1,0 +1,13 @@
+Installation
+============
+
+This section provides instructions on how to install the **UGNN** package.
+
+Installation from PyPI
+----------------------
+
+To install the package from PyPI, run the following command:
+
+::
+
+    pip install ugnn

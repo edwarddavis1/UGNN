@@ -2,6 +2,10 @@ import numpy as np
 import torch
 import copy
 
+from typing import Literal, Dict
+from ugnn.types import ExperimentParams, Masks, DataParams
+from torch_geometric.data import Data
+
 from ugnn.gnns import GCN, GAT, train, valid
 from ugnn.utils.metrics import accuracy, avg_set_size, coverage
 from ugnn.conformal import get_prediction_sets
@@ -10,18 +14,48 @@ from ugnn.utils.masks import mask_mix
 
 class Experiment:
     def __init__(
-        self, method, GNN_model, regime, data, masks, experiment_params, data_params
+        self,
+        method: Literal["BD", "UA"],
+        GNN_model: Literal["GCN", "GAT"],
+        regime: Literal["transductive", "semi-inductive", "temporal transductive"],
+        data: Data,
+        masks: Masks,
+        experiment_params: ExperimentParams,
+        data_params: DataParams,
     ):
         """
-        Initialise the experiment.
+        Initializes the experiment with the specified parameters.
+
+        This class trains a GNN on multiple networks (e.g., a discrete-time dynamic network)
+        and performs conformal prediction with the GNN. The experiment evaluates the GNN's
+        performance using accuracy, average prediction set size, and coverage.
+
+        The data is split into train, validation, calibration, and test groups based on the
+        specified regime:
+        - **Transductive**: Nodes are randomly assigned to train/valid/calib/test groups.
+        - **Semi-inductive**: Nodes after a certain time point are assigned to the test group,
+          while earlier nodes are randomly assigned to train/valid/calib groups.
+        - **Temporal transductive**: Nodes after a certain time point are split between calib
+          and test groups, while earlier nodes are assigned to train/valid groups.
 
         Args:
-            method (str): The method (e.g., "BD" or "UA").
-            GNN_model (str): The GNN model (e.g., "GCN" or "GAT").
-            regime (str): The experiment regime (e.g., "assisted semi-inductive", "transductive", "semi-inductive").
-            data: The dataset object.
-            masks (dict): Dictionary containing train, valid, calib, and test masks.
-            params (dict): Dictionary of experiment parameters (e.g., num_epochs, alpha, etc.).
+            method (Literal["BD", "UA"]): The method to represent multiple networks as a single
+                network ("block diagonal" or "unfolded").
+            GNN_model (Literal["GCN", "GAT"]): The GNN model to use.
+            regime (Literal["transductive", "semi-inductive", "temporal transductive"]): The
+                experiment regime.
+            data (Data): The dataset object containing graph data and labels.
+            masks (Masks): A dictionary with train, validation, calibration, and test masks.
+            experiment_params (ExperimentParams): Parameters for the experiment (e.g., number
+                of epochs, learning rate, etc.).
+            data_params (DataParams): Parameters for the dataset (e.g., number of nodes, time
+                steps, and classes).
+
+        Attributes:
+            results (dict): A dictionary to store evaluation metrics, including:
+                - Accuracy (overall and per time step).
+                - Average set size (overall and per time step).
+                - Coverage (overall and per time step).
         """
         self.method = method
         self.GNN_model = GNN_model
@@ -43,7 +77,7 @@ class Experiment:
 
     def initialise_model(self):
         """
-        initialise the GNN model based on the specified type.
+        Initialise the GNN model based on the specified type.
         """
         if self.GNN_model == "GCN":
             return GCN(

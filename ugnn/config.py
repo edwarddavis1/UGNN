@@ -1,9 +1,10 @@
 import numpy as np
 import os
+from ugnn.types import ExperimentParams
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# EXPERIMENT_PARAMS = {
+# EXPERIMENT_PARAMS: ExperimentParams = {
 #     "num_epochs": 200,
 #     "learning_rate": 0.01,
 #     "weight_decay": 5e-4,
@@ -16,13 +17,13 @@ ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 #     "num_train_semi_ind": 50,
 #     "methods": ["BD", "UA"],
 #     "GNN_models": ["GCN", "GAT"],
-#     # "regimes": ["semi-inductive", "transductive", "assisted semi-inductive"],
+#     # "regimes": ["semi-inductive", "transductive", "temporal transductive"],
 #     "regimes": ["semi-inductive"],
 #     "outputs": ["Accuracy", "Avg Size", "Coverage"],
 # }
 
 # MINIMAL EXPERIMENT
-EXPERIMENT_PARAMS = {
+EXPERIMENT_PARAMS: ExperimentParams = {
     "num_epochs": 10,
     "learning_rate": 0.01,
     "weight_decay": 5e-4,

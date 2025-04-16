@@ -12,6 +12,7 @@ from ugnn.config import EXPERIMENT_PARAMS
 from ugnn.utils.masks import mask_split, non_zero_degree_mask
 from ugnn.experiments import Experiment
 from ugnn.results_manager import ResultsManager
+from ugnn.types import DataParams
 
 np.random.seed(42)
 # %%
@@ -63,7 +64,7 @@ As, Z = eb.simulation.SBM(n, Bs, pi)
 node_labels = np.tile(Z, T)
 num_classes = K
 
-DATA_PARAMS = {
+DATA_PARAMS: DataParams = {
     "n": n,
     "T": T,
     "num_classes": num_classes,
