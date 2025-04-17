@@ -1,4 +1,4 @@
-# UGNN: The Unfolded Graph Neural Networks package.
+# [IN DEVELOPMENT] UGNN: The Unfolded Graph Neural Networks package.
 
 Welcome to the documentation for **UGNN**, a library for using the **unfolded graph neural network** (UGNN) model for discrete-time dynamic graphs.
 
@@ -6,10 +6,10 @@ For more details on this model, see the paper: [Valid Conformal Prediction for D
 
 ## Installation
 
-Package requires Python 3.12 or later.
+Package requires Python 3.11 or later. Once cloned, dependencies can be installed using the following command.
 
 ```bash
-pip install ugnn
+pip install .
 ```
 
 ## Usage Example
