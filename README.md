@@ -9,7 +9,7 @@ For more details on this model, see the paper: [Valid Conformal Prediction for D
 Package requires Python 3.11 or later. Once cloned, dependencies can be installed using the following command in the "UGNN" root directory.
 
 ```bash
-pip install .
+pip install -e .
 ```
 
 ## Usage Example
