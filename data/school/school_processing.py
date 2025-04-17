@@ -1,7 +1,8 @@
+import os
 import numpy as np
 
 
-def get_school_data(dir):
+def get_school_data():
     window = 60 * 60
 
     t_start = (8 * 60 + 30) * 60
@@ -10,7 +11,8 @@ def get_school_data(dir):
     T = int((t_end - t_start) // window)
     print(f"Number of time windows: {T}")
 
-    fname = dir + "/ia-primary-school-proximity-attr.edges"
+    base_dir = os.path.dirname(__file__)
+    fname = base_dir + "/ia-primary-school-proximity-attr.edges"
     file = open(fname)
 
     label_dict = {

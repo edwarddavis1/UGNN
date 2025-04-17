@@ -20,6 +20,22 @@ def non_zero_degree_mask(As, n, T):
 
 
 def mask_split(mask, split_props, seed=0, regime="transductive"):
+    """
+    Split a mask into train/valid/calib/test based on the specified regime.
+
+    Args:
+        mask (np.ndarray): A boolean mask of shape (n, T), where n is the number of nodes
+            and T is the number of time steps.
+        split_props (list of float): Proportions for splitting the data into
+            train/valid/calib/test. The proportions should sum to 1.
+        seed (int, optional): Random seed for reproducibility. Defaults to 0.
+        regime (str, optional): Splitting regime, either "transductive" or "semi-inductive".
+            Defaults to "transductive".
+
+    Returns:
+        list of np.ndarray: A list of boolean masks for each split (train, valid, calib, test).
+            Each mask has the same shape as the input mask.
+    """
     np.random.seed(seed)
 
     n, T = mask.shape
@@ -100,3 +116,19 @@ def mask_mix(mask_1, mask_2, seed=0):
         split_masks[i, split_idx[i]] = True
 
     return split_masks
+
+
+def pad_unfolded_mask(mask, n):
+    """
+    Padding required due to the n extra anchor nodes introduced in the unfolded representation.
+
+    These nodes are not included in training.
+
+    Args:
+        mask (np.ndarray): The original mask.
+        n (int): The number of nodes.
+
+    Returns:
+        np.ndarray: The padded mask.
+    """
+    return np.concatenate((np.array([False] * n), mask))
