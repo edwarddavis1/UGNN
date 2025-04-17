@@ -1,7 +1,7 @@
 [project]
 name = "ugnn"
 version = "0.1.0"
-description = "Add your description here"
+description = "Welcome to the documentation for **UGNN**, a library for using the **unfolded graph neural network** (UGNN) model for discrete-time dynamic graphs."
 readme = "README.md"
 authors = [
     { name = "edwarddavis1", email = "edwarddavis@hotmail.co.uk" }
