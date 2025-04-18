@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 import pandas as pd
 
+from data import get_sbm_data, get_school_data
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
 from ugnn.config import EXPERIMENT_PARAMS
 from ugnn.utils.masks import mask_split, non_zero_degree_mask
@@ -35,35 +36,24 @@ outputs = EXPERIMENT_PARAMS["outputs"]
 
 
 # Prepare results directory
-experiment_name = "example_experiment"
+experiment_name = "school"
 results_dir = f"results/{experiment_name}"
 os.makedirs(results_dir, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 results_file = f"{results_dir}/experiment_{timestamp}.pkl"
 
 # %%
-# GENERATE DATASET
+# Load data
+if experiment_name == "sbm":
+    As, node_labels = get_sbm_data()
+elif experiment_name == "school":
+    As, node_labels = get_school_data()
+else:
+    raise ValueError(f"Unknown experiment name: {experiment_name}")
 
-K = 3
-n = 100 * K
-T = 8
-pi = np.repeat(1 / K, K)
-
-a = [0.08, 0.16]
-Bs = 0.02 * np.ones((T, K, K))
-
-T_list = [t for t in range(T)]
-np.random.shuffle(T_list)
-
-for t in range(T):
-    for k in range(K):
-        Bs[t, k, k] = a[(T_list[t] & (1 << k)) >> k]
-
-As, Z = eb.simulation.SBM(n, Bs, pi)
-
-node_labels = np.tile(Z, T)
-num_classes = K
-
+n = As.shape[1]
+T = As.shape[0]
+num_classes = len(np.unique(node_labels))
 DATA_PARAMS: DataParams = {
     "n": n,
     "T": T,

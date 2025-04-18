@@ -29,7 +29,7 @@ def get_school_data():
         "Teachers": 10,
     }
     nodes = []
-    node_labels = []
+    spatial_node_labels = []
     edge_tuples = []
 
     for line in file:
@@ -40,11 +40,11 @@ def get_school_data():
 
         if node_i not in nodes:
             nodes.append(node_i)
-            node_labels.append(label_dict[id_i])
+            spatial_node_labels.append(label_dict[id_i])
 
         if node_j not in nodes:
             nodes.append(node_j)
-            node_labels.append(label_dict[id_j])
+            spatial_node_labels.append(label_dict[id_j])
 
         t = (int(time) - t_start) // window
         edge_tuples.append([t, node_i, node_j])
@@ -55,8 +55,8 @@ def get_school_data():
     n = len(nodes)
     print(f"Number of nodes: {n}")
 
-    node_dict = dict(zip(nodes[np.argsort(node_labels)], range(n)))
-    node_labels = np.sort(node_labels)
+    node_dict = dict(zip(nodes[np.argsort(spatial_node_labels)], range(n)))
+    spatial_node_labels = np.sort(spatial_node_labels)
 
     As = np.zeros((T, n, n))
 
@@ -64,5 +64,7 @@ def get_school_data():
         t, i, j = edge_tuples[m]
         As[int(t), node_dict[i], node_dict[j]] = 1
         As[int(t), node_dict[j], node_dict[i]] = 1
+
+    node_labels = np.tile(spatial_node_labels, T)
 
     return As, node_labels

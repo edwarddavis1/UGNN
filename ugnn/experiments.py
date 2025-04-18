@@ -115,7 +115,7 @@ class Experiment:
                 max_valid_acc = valid_acc
                 self.best_model = copy.deepcopy(model)
 
-        print(f"Validation accuracy: {max_valid_acc:0.3f}")
+        # print(f"Validation accuracy: {max_valid_acc:0.3f}")
 
     def evaluate(self):
         """

@@ -11,14 +11,13 @@ EXPERIMENT_PARAMS: ExperimentParams = {
     "num_channels_GCN": 16,
     "num_channels_GAT": 16,
     "alpha": 0.1,
-    "props": [0.5, 0.3, 0.1, 0.1],
+    "props": [0.2, 0.1, 0.35, 0.35],
     "num_train_trans": 10,
     "num_permute_trans": 100,
     "num_train_semi_ind": 50,
     "methods": ["BD", "UA"],
     "GNN_models": ["GCN", "GAT"],
-    # "regimes": ["semi-inductive", "transductive", "temporal transductive"],
-    "regimes": ["transductive"],
+    "regimes": ["semi-inductive", "transductive", "temporal transductive"],
     "outputs": ["Accuracy", "Avg Size", "Coverage"],
 }
 

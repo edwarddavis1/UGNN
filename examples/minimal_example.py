@@ -1,17 +1,16 @@
 import numpy as np
 import copy
 import torch
-from data.school.school_processing import get_school_data
+from data import get_school_data
 from ugnn.networks import Dynamic_Network, Unfolded_Network
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
 
 
 # Load data
-As, spatial_node_labels = get_school_data()
+As, node_labels = get_school_data()
 n = As.shape[1]
 T = As.shape[0]
-node_labels = np.tile(spatial_node_labels, T)
 num_classes = len(np.unique(node_labels))
 
 # Convert to a torch geometric dataset containing T graphs
