@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import copy
 
-from typing import Literal, Dict
+from typing import Literal
 from ugnn.types import ExperimentParams, Masks, DataParams
 from torch_geometric.data import Data
 
@@ -22,6 +22,7 @@ class Experiment:
         masks: Masks,
         experiment_params: ExperimentParams,
         data_params: DataParams,
+        conformal_method: Literal["APS", "RAPS", "SAPS"] = "APS",
     ):
         """
         Initializes the experiment with the specified parameters.
@@ -63,6 +64,7 @@ class Experiment:
         self.data = data
         self.masks = masks
         self.params = experiment_params
+        self.conformal_method = conformal_method
 
         # Data params
         self.n = data_params["n"]
@@ -136,7 +138,7 @@ class Experiment:
                     calib_mask,
                     test_mask,
                     self.params["alpha"],
-                    method="APS",
+                    method=self.conformal_method,
                 )
 
                 self._update_results(output, pred_sets, test_mask)
@@ -147,7 +149,7 @@ class Experiment:
                 self.masks["calib"],
                 self.masks["test"],
                 self.params["alpha"],
-                method="APS",
+                method=self.conformal_method,
             )
             self._update_results(output, pred_sets, self.masks["test"])
 

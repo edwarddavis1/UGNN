@@ -12,7 +12,7 @@ def get_prediction_sets(
     calib_mask: Tensor,
     test_mask: Tensor,
     alpha: float = 0.1,
-    method: Literal["APS"] = "APS",
+    method: Literal["APS", "RAPS", "SAPS"] = "APS",
 ) -> np.ndarray[np.bool_]:
     """
     Computes conformal prediction sets from the model's output.
@@ -55,7 +55,7 @@ def get_prediction_sets(
         calib_scores = np.take_along_axis(calib_srt, calib_pi.argsort(axis=1), axis=1)[
             range(n_calib), data.y[calib_mask]
         ]
-    elif method == "RAPS":
+    elif method == "RAPS" or method == "SAPS":
         raise NotImplementedError("RAPS method is not implemented yet.")
     else:
         raise ValueError(f"Unknown method: {method}")
@@ -65,7 +65,7 @@ def get_prediction_sets(
 
     if qhat_quantile > 1:
         raise ValueError(
-            f"Specified quantile is larger than 1. Either increase the number of calibration data points or increase alpha."
+            "Specified quantile is larger than 1. Either increase the number of calibration data points or increase alpha."
         )
 
     qhat = np.quantile(calib_scores, qhat_quantile, method="higher")

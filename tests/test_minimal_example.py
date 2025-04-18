@@ -1,4 +1,3 @@
-import pytest
 import numpy as np
 import torch
 from data import get_school_data

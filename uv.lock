@@ -1853,6 +1853,7 @@ dependencies = [
     { name = "ipykernel" },
     { name = "numpy" },
     { name = "pyemb" },
+    { name = "scipy" },
     { name = "torch" },
     { name = "torch-geometric" },
 ]
@@ -1868,6 +1869,7 @@ requires-dist = [
     { name = "ipykernel", specifier = ">=6.29.5" },
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "pyemb", specifier = "==1.0.0a13" },
+    { name = "scipy", specifier = ">=1.14.1" },
     { name = "torch", specifier = ">=2.6.0" },
     { name = "torch-geometric", specifier = ">=2.6.1" },
 ]
