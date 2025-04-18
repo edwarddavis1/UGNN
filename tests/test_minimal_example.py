@@ -97,8 +97,6 @@ def test_minimal_block_diagonal_example_with_random_data():
     train_mask, valid_mask, _, _ = mask_split(
         data_mask, split_props=[0.2, 0.1, 0.35, 0.35], regime=regime
     )
-    train_mask = pad_unfolded_mask(train_mask, n)
-    valid_mask = pad_unfolded_mask(valid_mask, n)
 
     model = GCN(
         num_nodes=block_diag_network.num_nodes,
@@ -138,8 +136,6 @@ def test_minimal_block_diagonal_example_with_sparse_data():
     train_mask, valid_mask, _, _ = mask_split(
         data_mask, split_props=[0.2, 0.1, 0.35, 0.35], regime=regime
     )
-    train_mask = pad_unfolded_mask(train_mask, n)
-    valid_mask = pad_unfolded_mask(valid_mask, n)
 
     model = GCN(
         num_nodes=block_diag_network.num_nodes,
