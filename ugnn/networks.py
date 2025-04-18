@@ -25,6 +25,7 @@ class Dynamic_Network(Dataset):
         self.T = As.shape[0]  # number of time points
         self.n = As[0].shape[0]  # number of nodes
         self.classes = labels  # list of labels
+        self.sparse = sparse.issparse(As[0])  # check if the matrices are sparse
 
     def __len__(self):
         return len(self.As)
@@ -34,18 +35,21 @@ class Dynamic_Network(Dataset):
         # (the idxth time point)
 
         # Set attributes to be the identity matrix
-        x = torch.tensor(np.eye(self.n), dtype=torch.float)
+        x = form_empty_attributes(self.n, sparse=self.sparse)
 
         # Get the adjacency matrix for the current time point
         edge_index = torch.tensor(
             np.array([self.As[idx].nonzero()]), dtype=torch.long
         ).reshape(2, -1)
+        edge_weight = torch.tensor(np.array(self.As[idx].data), dtype=torch.float)
 
         # Node labels for this time point
         y = torch.tensor(self.classes, dtype=torch.long)
 
         # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
+        data = torch_geometric.data.Data(
+            x=x, edge_index=edge_index, edge_weight=edge_weight, y=y
+        )
         data.num_nodes = self.n
 
         return data
@@ -54,6 +58,9 @@ class Dynamic_Network(Dataset):
 class Block_Diagonal_Network(Dataset):
     """
     A pytorch geometric dataset for the block diagonal version of a Dynamic Network object.
+
+    NOTE: Attributes are left empty (identity) for now.
+    Functionality to take attributes will be added soon.
     """
 
     def __init__(self, dataset):
@@ -71,10 +78,13 @@ class Block_Diagonal_Network(Dataset):
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
+        edge_weight = torch.tensor(np.array(self.A.data), dtype=torch.float)
         y = torch.tensor(self.classes, dtype=torch.long)
 
         # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
+        data = torch_geometric.data.Data(
+            x=x, edge_index=edge_index, edge_weight=edge_weight, y=y
+        )
         data.num_nodes = self.n * self.T
 
         return data
@@ -83,6 +93,9 @@ class Block_Diagonal_Network(Dataset):
 class Unfolded_Network(Dataset):
     """
     A pytorch geometric dataset for the dilated unfolding of a Dynamic Network object.
+
+    NOTE: Attributes are left empty (identity) for now.
+    Functionality to take attributes will be added soon.
     """
 
     def __init__(self, dataset):
@@ -100,12 +113,17 @@ class Unfolded_Network(Dataset):
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
+        edge_weight = torch.tensor(np.array(self.A.data), dtype=torch.float)
+
+        # Add n zeros to the start of y for the anchors
         y = torch.tensor(
             np.concatenate((np.zeros(self.n), self.classes)), dtype=torch.long
         )
 
         # Create a PyTorch Geometric data object
-        data = torch_geometric.data.Data(x=x, edge_index=edge_index, y=y)
+        data = torch_geometric.data.Data(
+            x=x, edge_index=edge_index, edge_weight=edge_weight, y=y
+        )
         data.num_nodes = self.n * (self.T + 1)
 
         return data

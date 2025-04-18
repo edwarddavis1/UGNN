@@ -2,14 +2,14 @@ import numpy as np
 from tqdm import tqdm
 import copy
 import torch
-from data import get_school_data, get_flight_data
+from data import get_school_data
 from ugnn.networks import Dynamic_Network, Unfolded_Network
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
 
 
 # Load data
-As, node_labels = get_flight_data()
+As, node_labels = get_school_data()
 T = len(As)
 n = As[0].shape[0]
 num_classes = len(np.unique(node_labels))
