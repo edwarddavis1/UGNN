@@ -36,7 +36,7 @@ outputs = EXPERIMENT_PARAMS["outputs"]
 
 
 # Prepare results directory
-experiment_name = "school"
+experiment_name = EXPERIMENT_PARAMS["data"]
 results_dir = f"results/{experiment_name}"
 os.makedirs(results_dir, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
