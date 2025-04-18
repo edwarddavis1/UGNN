@@ -8,16 +8,19 @@ on:
         branches:
             - master
 
+permissions:
+    contents: write
+
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
 
         steps:
             - name: Checkout repository
-              uses: actions/checkout@v3
+              uses: actions/checkout@v4
 
             - name: Set up Python
-              uses: actions/setup-python@v4
+              uses: actions/setup-python@v5
               with:
                   python-version: "3.11"
 
@@ -26,14 +29,15 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install sphinx sphinx-rtd-theme myst-parser
 
-            - name: Build documentation
-              working-directory: docs
-              run: |
-                  make html
+            - name: Sphinx build
+                run: |
+                sphinx-build doc _build
 
             - name: Deploy to GitHub Pages
               uses: peaceiris/actions-gh-pages@v3
+              if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
               with:
-                  github_token: ${{ secrets.GITHUB_TOKEN }}
-                  publish_dir: docs/_build/html
-                  publish_branch: gh-pages
+                publish_branch: gh-pages
+                github_token: ${{ secrets.GITHUB_TOKEN }}
+                publish_dir: _build/
+                force_orphan: true
