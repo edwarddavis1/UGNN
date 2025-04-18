@@ -1,16 +1,17 @@
 import numpy as np
+from tqdm import tqdm
 import copy
 import torch
-from data import get_school_data
+from data import get_school_data, get_flight_data
 from ugnn.networks import Dynamic_Network, Unfolded_Network
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
 
 
 # Load data
-As, node_labels = get_school_data()
-n = As.shape[1]
-T = As.shape[0]
+As, node_labels = get_flight_data()
+T = len(As)
+n = As[0].shape[0]
 num_classes = len(np.unique(node_labels))
 
 # Convert to a torch geometric dataset containing T graphs
@@ -39,7 +40,7 @@ model = GCN(
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
 max_valid_acc = 0
-for epoch in range(200):
+for epoch in tqdm(range(200)):
     _ = train(model, unf_network, train_mask, optimizer)
     valid_acc = valid(model, unf_network, valid_mask)
 

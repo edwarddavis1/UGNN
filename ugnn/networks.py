@@ -58,6 +58,7 @@ class Block_Diagonal_Network(Dataset):
 
     def __init__(self, dataset):
         self.A = block_diagonal_matrix_from_series(dataset.As)
+        self.sparse = sparse.issparse(self.A)
         self.T = dataset.T
         self.n = dataset.n
         self.classes = dataset.classes
@@ -66,7 +67,7 @@ class Block_Diagonal_Network(Dataset):
         return 1
 
     def __getitem__(self, idx):
-        x = torch.tensor(np.eye(self.n * self.T), dtype=torch.float)
+        x = form_empty_attributes(self.n * self.T, sparse=self.sparse)
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
@@ -86,6 +87,7 @@ class Unfolded_Network(Dataset):
 
     def __init__(self, dataset):
         self.A = unfolded_matrix_from_series(dataset.As)
+        self.sparse = sparse.issparse(self.A)
         self.T = dataset.T
         self.n = dataset.n
         self.classes = dataset.classes
@@ -94,7 +96,7 @@ class Unfolded_Network(Dataset):
         return 1
 
     def __getitem__(self, idx):
-        x = torch.tensor(np.eye(self.n * (self.T + 1)), dtype=torch.float)
+        x = form_empty_attributes(self.n * (self.T + 1), sparse=self.sparse)
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
@@ -107,6 +109,15 @@ class Unfolded_Network(Dataset):
         data.num_nodes = self.n * (self.T + 1)
 
         return data
+
+
+def form_empty_attributes(m, sparse=False):
+    """Forms the appropriately sized identity matrix for the (empty) attributes of the network"""
+    if sparse:
+        x = torch.sparse.spdiags(torch.ones(m), offsets=torch.tensor([0]), shape=(m, m))
+    else:
+        x = torch.eye(m, dtype=torch.float)
+    return x
 
 
 def unfolded_matrix_from_series(As):
