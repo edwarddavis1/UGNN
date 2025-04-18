@@ -22,7 +22,7 @@ class Dynamic_Network(Dataset):
 
     def __init__(self, As, labels):
         self.As = As  # list of adjacency matrices
-        self.T = As[0]  # number of time points
+        self.T = As.shape[0]  # number of time points
         self.n = As[0].shape[0]  # number of nodes
         self.classes = labels  # list of labels
 
@@ -57,7 +57,7 @@ class Block_Diagonal_Network(Dataset):
     """
 
     def __init__(self, dataset):
-        self.A = block_diag(*dataset.As)
+        self.A = block_diagonal_matrix_from_series(dataset.As)
         self.T = dataset.T
         self.n = dataset.n
         self.classes = dataset.classes
@@ -85,7 +85,7 @@ class Unfolded_Network(Dataset):
     """
 
     def __init__(self, dataset):
-        self.A = general_unfolded_matrix(dataset.As)
+        self.A = unfolded_matrix_from_series(dataset.As)
         self.T = dataset.T
         self.n = dataset.n
         self.classes = dataset.classes
@@ -109,7 +109,7 @@ class Unfolded_Network(Dataset):
         return data
 
 
-def general_unfolded_matrix(As):
+def unfolded_matrix_from_series(As):
     """Forms the general unfolded matrix from an adjacency series"""
     T = len(As)
     n = As[0].shape[0]
@@ -133,3 +133,17 @@ def general_unfolded_matrix(As):
         DA[n:, 0:n] = A.T
 
     return DA
+
+
+def block_diagonal_matrix_from_series(As):
+    """Forms the block diagonal matrix from an adjacency series"""
+    T = len(As)
+    n = As[0].shape[0]
+
+    # Construct the block diagonal adjacency matrix
+    if sparse.issparse(As[0]):
+        A = sparse.block_diag(As)
+    else:
+        A = block_diag(*As)
+
+    return A
