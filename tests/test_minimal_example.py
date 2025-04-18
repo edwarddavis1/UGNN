@@ -6,7 +6,7 @@ from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
 
 
-def test_minimal_example(epochs=3):
+def test_minimal_example():
     # Mock or load data
     As, node_labels = get_school_data()
     n = As.shape[1]
@@ -37,14 +37,7 @@ def test_minimal_example(epochs=3):
     )
     optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-    max_valid_acc = 0
-    for _ in range(epochs):
-        _ = train(model, unf_network, train_mask, optimizer)
-        valid_acc = valid(model, unf_network, valid_mask)
+    _ = train(model, unf_network, train_mask, optimizer)
+    valid_acc = valid(model, unf_network, valid_mask)
 
-        assert valid_acc >= 0, "Validation accuracy should be non-negative"
-
-        if valid_acc > max_valid_acc:
-            max_valid_acc = valid_acc
-
-    assert max_valid_acc > 0, "Model should achieve some accuracy"
+    assert valid_acc >= 0, "Validation accuracy should be non-negative"

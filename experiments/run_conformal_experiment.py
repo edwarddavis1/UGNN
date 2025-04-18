@@ -54,8 +54,9 @@ else:
 
 print(f"Loaded {experiment_name} data ")
 
-n = As.shape[1]
 T = As.shape[0]
+n = As[0].shape[0]
+
 num_classes = len(np.unique(node_labels))
 DATA_PARAMS: DataParams = {
     "n": n,
