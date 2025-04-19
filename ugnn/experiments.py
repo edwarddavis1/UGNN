@@ -124,7 +124,9 @@ class Experiment:
         Evaluate the trained model and compute metrics.
         """
         # print(f"Evaluating {self.method} {self.GNN_model} in {self.regime} regime")
-        output = self.best_model(self.data.x, self.data.edge_index)
+        output = self.best_model(
+            self.data.x, self.data.edge_index, self.data.edge_weight
+        )
 
         if self.regime != "semi-inductive":
             for j in range(self.params["num_permute_trans"]):

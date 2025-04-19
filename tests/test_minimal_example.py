@@ -1,7 +1,6 @@
 import numpy as np
 import torch
 from scipy.sparse import random as sparse_random
-from scipy.sparse import coo_matrix
 from ugnn.networks import Dynamic_Network, Unfolded_Network, Block_Diagonal_Network
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
@@ -48,8 +47,8 @@ def test_minimal_unfolded_example_with_sparse_data():
     density = 0.1
     As = np.array(
         [
-            coo_matrix(
-                sparse_random(n, n, density=density, format="coo", random_state=42)
+            sparse_random(
+                n, n, density=density, format="csr", random_state=42
             ).toarray()
             for _ in range(T)
         ]
@@ -120,8 +119,8 @@ def test_minimal_block_diagonal_example_with_sparse_data():
     density = 0.1
     As = np.array(
         [
-            coo_matrix(
-                sparse_random(n, n, density=density, format="coo", random_state=42)
+            sparse_random(
+                n, n, density=density, format="csr", random_state=42
             ).toarray()
             for _ in range(T)
         ]

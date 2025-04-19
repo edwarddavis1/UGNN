@@ -44,7 +44,9 @@ class Dynamic_Network(Dataset):
         edge_weight = torch.tensor(np.array(self.As[idx].data), dtype=torch.float)
 
         # Node labels for this time point
-        y = torch.tensor(self.classes, dtype=torch.long)
+        y = torch.tensor(
+            self.classes[self.n * idx : self.n * (idx + 1)], dtype=torch.long
+        )
 
         # Create a PyTorch Geometric data object
         data = torch_geometric.data.Data(
@@ -78,7 +80,7 @@ class Block_Diagonal_Network(Dataset):
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
-        edge_weight = torch.tensor(np.array(self.A.data), dtype=torch.float)
+        edge_weight = get_edge_weights(self.A)
         y = torch.tensor(self.classes, dtype=torch.long)
 
         # Create a PyTorch Geometric data object
@@ -113,7 +115,7 @@ class Unfolded_Network(Dataset):
         edge_index = torch.tensor(
             np.array([self.A.nonzero()]), dtype=torch.long
         ).reshape(2, -1)
-        edge_weight = torch.tensor(np.array(self.A.data), dtype=torch.float)
+        edge_weight = get_edge_weights(self.A)
 
         # Add n zeros to the start of y for the anchors
         y = torch.tensor(
@@ -127,6 +129,14 @@ class Unfolded_Network(Dataset):
         data.num_nodes = self.n * (self.T + 1)
 
         return data
+
+
+def get_edge_weights(A):
+    """Returns the edge weights for the adjacency matrix A"""
+    if sparse.issparse(A):
+        return torch.tensor(np.array(A.data), dtype=torch.float)
+    else:
+        return torch.tensor(A[A != 0], dtype=torch.float)
 
 
 def form_empty_attributes(m, sparse=False):
