@@ -4,16 +4,60 @@ import numpy as np
 from tqdm import tqdm
 import os
 from datetime import datetime
+import argparse
 
 from data import get_sbm_data, get_school_data, get_flight_data
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
-from ugnn.config import EXPERIMENT_PARAMS
+from ugnn.config import (
+    SBM_EXPERIMENT_PARAMS,
+    SCHOOL_EXPERIMENT_PARAMS,
+    FLIGHT_EXPERIMENT_PARAMS,
+)
 from ugnn.utils.masks import mask_split, non_zero_degree_mask
 from ugnn.experiments import Experiment
 from ugnn.results_manager import ResultsManager
 from ugnn.types import DataParams
 
 np.random.seed(42)
+# %%
+parser = argparse.ArgumentParser(description="Run conformal experiment.")
+parser.add_argument(
+    "--data",
+    type=str,
+    choices=["sbm", "school", "flight"],
+    required=True,
+    help="Name of the experiment to run (sbm, school, or flight).",
+)
+args = parser.parse_args()
+experiment_name = args.data
+
+
+# Load data
+if experiment_name == "sbm":
+    As, node_labels = get_sbm_data()
+    EXPERIMENT_PARAMS = SBM_EXPERIMENT_PARAMS
+elif experiment_name == "school":
+    As, node_labels = get_school_data()
+    EXPERIMENT_PARAMS = SCHOOL_EXPERIMENT_PARAMS
+elif experiment_name == "flight":
+    As, node_labels = get_flight_data()
+    EXPERIMENT_PARAMS = FLIGHT_EXPERIMENT_PARAMS
+else:
+    raise ValueError(f"Unknown experiment name: {experiment_name}")
+
+print(f"Loaded {experiment_name} data ")
+
+T = As.shape[0]
+n = As[0].shape[0]
+
+num_classes = len(np.unique(node_labels))
+DATA_PARAMS: DataParams = {
+    "n": n,
+    "T": T,
+    "num_classes": num_classes,
+}
+
+
 # %%
 # Unpack parameters from EXPERIMENT_PARAMS
 props = EXPERIMENT_PARAMS["props"]
@@ -40,29 +84,6 @@ results_dir = f"results/{experiment_name}"
 os.makedirs(results_dir, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 results_file = f"{results_dir}/experiment_{timestamp}.pkl"
-
-# %%
-# Load data
-if experiment_name == "sbm":
-    As, node_labels = get_sbm_data()
-elif experiment_name == "school":
-    As, node_labels = get_school_data()
-elif experiment_name == "flight":
-    As, node_labels = get_flight_data()
-else:
-    raise ValueError(f"Unknown experiment name: {experiment_name}")
-
-print(f"Loaded {experiment_name} data ")
-
-T = As.shape[0]
-n = As[0].shape[0]
-
-num_classes = len(np.unique(node_labels))
-DATA_PARAMS: DataParams = {
-    "n": n,
-    "T": T,
-    "num_classes": num_classes,
-}
 
 # %%
 # Convert the data from adjacency matrices and labels to a torch geometric dataset

@@ -1,7 +1,7 @@
 import numpy as np
 from unittest.mock import MagicMock
 
-from ugnn.config import EXPERIMENT_PARAMS
+from ugnn.config import SBM_EXPERIMENT_PARAMS
 from ugnn.experiments import Experiment
 
 
@@ -17,7 +17,7 @@ def test_experiment_initialisation():
         "calib": np.array([False, False, True]),
         "test": np.array([False, False, False]),
     }
-    experiment_params = EXPERIMENT_PARAMS
+    experiment_params = SBM_EXPERIMENT_PARAMS
     data_params = {
         "n": 3,
         "T": 2,
