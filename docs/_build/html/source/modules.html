@@ -14,6 +14,8 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ugnn package" href="ugnn.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -47,7 +49,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ugnn.html#module-ugnn.experiments">ugnn.experiments module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.experiments.Experiment"><code class="docutils literal notranslate"><span class="pre">Experiment</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="ugnn.html#ugnn.experiments.Experiment.results"><code class="docutils literal notranslate"><span class="pre">Experiment.results</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ugnn.html#ugnn.experiments.Experiment.evaluate"><code class="docutils literal notranslate"><span class="pre">Experiment.evaluate()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ugnn.html#ugnn.experiments.Experiment.initialise_model"><code class="docutils literal notranslate"><span class="pre">Experiment.initialise_model()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="ugnn.html#ugnn.experiments.Experiment.train"><code class="docutils literal notranslate"><span class="pre">Experiment.train()</span></code></a></li>
@@ -72,6 +73,10 @@
 <li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.Block_Diagonal_Network"><code class="docutils literal notranslate"><span class="pre">Block_Diagonal_Network</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.Dynamic_Network"><code class="docutils literal notranslate"><span class="pre">Dynamic_Network</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.Unfolded_Network"><code class="docutils literal notranslate"><span class="pre">Unfolded_Network</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.block_diagonal_matrix_from_series"><code class="docutils literal notranslate"><span class="pre">block_diagonal_matrix_from_series()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.form_empty_attributes"><code class="docutils literal notranslate"><span class="pre">form_empty_attributes()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.get_edge_weights"><code class="docutils literal notranslate"><span class="pre">get_edge_weights()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.html#ugnn.networks.unfolded_matrix_from_series"><code class="docutils literal notranslate"><span class="pre">unfolded_matrix_from_series()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ugnn.html#module-ugnn.results_manager">ugnn.results_manager module</a><ul>
@@ -84,6 +89,39 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="ugnn.html#module-ugnn">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ugnn.utils.html">ugnn.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html#module-ugnn.utils.masks">ugnn.utils.masks module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.masks.mask_mix"><code class="docutils literal notranslate"><span class="pre">mask_mix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.masks.mask_split"><code class="docutils literal notranslate"><span class="pre">mask_split()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.masks.non_zero_degree_mask"><code class="docutils literal notranslate"><span class="pre">non_zero_degree_mask()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.masks.pad_unfolded_mask"><code class="docutils literal notranslate"><span class="pre">pad_unfolded_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html#module-ugnn.utils.metrics">ugnn.utils.metrics module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.metrics.accuracy"><code class="docutils literal notranslate"><span class="pre">accuracy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.metrics.avg_set_size"><code class="docutils literal notranslate"><span class="pre">avg_set_size()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="ugnn.utils.html#ugnn.utils.metrics.coverage"><code class="docutils literal notranslate"><span class="pre">coverage()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html#module-ugnn.utils">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="data.html">data package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data.html#module-data.sbm.sbm_processing">data.sbm module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.html#data.sbm.sbm_processing.get_sbm_data"><code class="docutils literal notranslate"><span class="pre">get_sbm_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#module-data.school.school_processing">data.school module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.html#data.school.school_processing.get_school_data"><code class="docutils literal notranslate"><span class="pre">get_school_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="data.html#module-data.flight.flight_processing">data.flight module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data.html#data.flight.flight_processing.get_flight_data"><code class="docutils literal notranslate"><span class="pre">get_flight_data()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -117,15 +155,23 @@
 </search>
 <script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="ugnn.html">ugnn package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UGNN</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.html">ugnn package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html">ugnn.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">data package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/minimal_example.html">Minimal Example</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="ugnn.html" title="next chapter">ugnn package</a></li>
   </ul></li>
 </ul>
 </div>

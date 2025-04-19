@@ -26,6 +26,7 @@ class ResultsManager:
         self.results_dir = f"{self.base_dir}/{experiment_name}"
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         self.results_file = f"{self.results_dir}/experiment_{self.timestamp}.pkl"
+        self.experiment_params = None
 
         # Create the results directory if it doesn't exist
         os.makedirs(self.results_dir, exist_ok=True)
@@ -89,6 +90,9 @@ class ResultsManager:
             exp (Experiment): The Experiment object containing results and metadata.
         """
 
+        if self.experiment_params is None:
+            self.experiment_params = exp.params
+
         exp_rows = self._format_exp_results(exp)
 
         self.all.extend(
@@ -115,6 +119,11 @@ class ResultsManager:
         """
         with open(self.results_file, "wb") as f:
             pickle.dump(self.all, f)
+
+        # Also save the params with the results
+        with open(f"{self.results_dir}/params_{self.timestamp}.pkl", "wb") as f:
+            pickle.dump(self.experiment_params, f)
+
         print(f"Results saved to {self.results_file}")
 
     def return_df(self):

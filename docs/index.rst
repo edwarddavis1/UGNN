@@ -15,7 +15,7 @@ For more details on this model see the paper, `Valid Conformal Prediction for Dy
    :caption: Contents:
 
    source/installation
-   source/ugnn
+   source/modules
    examples/minimal_example
 
 Additional Resources

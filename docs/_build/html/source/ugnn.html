@@ -14,7 +14,8 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="Installation" href="installation.html" />
+    <link rel="next" title="ugnn.utils package" href="ugnn.utils.html" />
+    <link rel="prev" title="UGNN" href="modules.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -58,7 +59,7 @@
 <span id="ugnn-conformal-module"></span><h2>ugnn.conformal module<a class="headerlink" href="#module-ugnn.conformal" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ugnn.conformal.get_prediction_sets">
-<span class="sig-prename descclassname"><span class="pre">ugnn.conformal.</span></span><span class="sig-name descname"><span class="pre">get_prediction_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'APS'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'APS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#ugnn.conformal.get_prediction_sets" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">ugnn.conformal.</span></span><span class="sig-name descname"><span class="pre">get_prediction_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'APS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'RAPS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SAPS'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'APS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="headerlink" href="#ugnn.conformal.get_prediction_sets" title="Link to this definition">¶</a></dt>
 <dd><p>Computes conformal prediction sets from the model’s output.</p>
 <p>This function uses data points from the calibration set to compute a non-conformity score,
 which measures how “strange” a data-label pair is. It then calculates the quantile of the
@@ -80,7 +81,7 @@ non-conformity scores to form prediction sets for the test set.</p>
 and each column indicates whether a class is included in the prediction set.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray[<a href="#id1"><span class="problematic" id="id2">np.bool_</span></a>]</p>
+<dd class="field-odd"><p>np.ndarray</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
@@ -98,20 +99,18 @@ and each column indicates whether a class is included in the prediction set.</p>
 <span id="ugnn-experiments-module"></span><h2>ugnn.experiments module<a class="headerlink" href="#module-ugnn.experiments" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ugnn.experiments.Experiment">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.experiments.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'BD'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'UA'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GNN_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'GCN'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'GAT'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'transductive'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'semi-inductive'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'temporal</span> <span class="pre">transductive'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExperimentParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataParams</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.experiments.Experiment" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.experiments.</span></span><span class="sig-name descname"><span class="pre">Experiment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'BD'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'UA'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">GNN_model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'GCN'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'GAT'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'transductive'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'semi-inductive'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'temporal</span> <span class="pre">transductive'</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">masks</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Masks</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExperimentParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">conformal_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'APS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'RAPS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SAPS'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'APS'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.experiments.Experiment" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Initializes the experiment with the specified parameters.</p>
 <p>This class trains a GNN on multiple networks (e.g., a discrete-time dynamic network)
 and performs conformal prediction with the GNN. The experiment evaluates the GNN’s
 performance using accuracy, average prediction set size, and coverage.</p>
 <p>The data is split into train, validation, calibration, and test groups based on the
-specified regime:
-- <strong>Transductive</strong>: Nodes are randomly assigned to train/valid/calib/test groups.
-- <strong>Semi-inductive</strong>: Nodes after a certain time point are assigned to the test group,</p>
-<blockquote>
-<div><p>while earlier nodes are randomly assigned to train/valid/calib groups.</p>
-</div></blockquote>
+specified regime:</p>
 <ul class="simple">
+<li><p><strong>Transductive</strong>: Nodes are randomly assigned to train/valid/calib/test groups.</p></li>
+<li><p><strong>Semi-inductive</strong>: Nodes after a certain time point are assigned to the test group,
+while earlier nodes are randomly assigned to train/valid/calib groups.</p></li>
 <li><p><strong>Temporal transductive</strong>: Nodes after a certain time point are split between calib
 and test groups, while earlier nodes are assigned to train/valid groups.</p></li>
 </ul>
@@ -132,20 +131,6 @@ steps, and classes).</p></li>
 </ul>
 </dd>
 </dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="ugnn.experiments.Experiment.results">
-<span class="sig-name descname"><span class="pre">results</span></span><a class="headerlink" href="#ugnn.experiments.Experiment.results" title="Link to this definition">¶</a></dt>
-<dd><p>A dictionary to store evaluation metrics, including:
-- Accuracy (overall and per time step).
-- Average set size (overall and per time step).
-- Coverage (overall and per time step).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>dict</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="ugnn.experiments.Experiment.evaluate">
 <span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.experiments.Experiment.evaluate" title="Link to this definition">¶</a></dt>
@@ -176,7 +161,7 @@ steps, and classes).</p></li>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ugnn.gnns.GAT.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.gnns.GAT.forward" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_weight</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.gnns.GAT.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Define the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -197,7 +182,7 @@ registered hooks while the latter silently ignores them.</p>
 <p>Initialize internal Module state, shared by both nn.Module and ScriptModule.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ugnn.gnns.GCN.forward">
-<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.gnns.GCN.forward" title="Link to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_weight</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.gnns.GCN.forward" title="Link to this definition">¶</a></dt>
 <dd><p>Define the computation performed at every call.</p>
 <p>Should be overridden by all subclasses.</p>
 <div class="admonition note">
@@ -229,6 +214,8 @@ registered hooks while the latter silently ignores them.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">Block_Diagonal_Network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.Block_Diagonal_Network" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
 <p>A pytorch geometric dataset for the block diagonal version of a Dynamic Network object.</p>
+<p>NOTE: Attributes are left empty (identity) for now.
+Functionality to take attributes will be added soon.</p>
 </dd></dl>
 
 <dl class="py class">
@@ -251,6 +238,32 @@ For this, we use the nxn identity matrix for each time point.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">Unfolded_Network</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.Unfolded_Network" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Dataset</span></code></p>
 <p>A pytorch geometric dataset for the dilated unfolding of a Dynamic Network object.</p>
+<p>NOTE: Attributes are left empty (identity) for now.
+Functionality to take attributes will be added soon.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.networks.block_diagonal_matrix_from_series">
+<span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">block_diagonal_matrix_from_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">As</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.block_diagonal_matrix_from_series" title="Link to this definition">¶</a></dt>
+<dd><p>Forms the block diagonal matrix from an adjacency series</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.networks.form_empty_attributes">
+<span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">form_empty_attributes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.form_empty_attributes" title="Link to this definition">¶</a></dt>
+<dd><p>Forms the appropriately sized identity matrix for the (empty) attributes of the network</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.networks.get_edge_weights">
+<span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">get_edge_weights</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.get_edge_weights" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the edge weights for the adjacency matrix A</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.networks.unfolded_matrix_from_series">
+<span class="sig-prename descclassname"><span class="pre">ugnn.networks.</span></span><span class="sig-name descname"><span class="pre">unfolded_matrix_from_series</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">As</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#ugnn.networks.unfolded_matrix_from_series" title="Link to this definition">¶</a></dt>
+<dd><p>Forms the general unfolded matrix from an adjacency series</p>
 </dd></dl>
 
 </section>
@@ -343,24 +356,23 @@ For this, we use the nxn identity matrix for each time point.</p>
 <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">ugnn package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.config">ugnn.config module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.conformal">ugnn.conformal module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.experiments">ugnn.experiments module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.gnns">ugnn.gnns module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.networks">ugnn.networks module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn.results_manager">ugnn.results_manager module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-ugnn">Module contents</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">UGNN</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ugnn package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ugnn.utils.html">ugnn.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">data package</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/minimal_example.html">Minimal Example</a></li>
 </ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+  <li><a href="modules.html">UGNN</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">UGNN</a></li>
+      <li>Next: <a href="ugnn.utils.html" title="next chapter">ugnn.utils package</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>

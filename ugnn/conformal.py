@@ -13,7 +13,7 @@ def get_prediction_sets(
     test_mask: Tensor,
     alpha: float = 0.1,
     method: Literal["APS", "RAPS", "SAPS"] = "APS",
-) -> np.ndarray[np.bool_]:
+) -> np.ndarray:
     """
     Computes conformal prediction sets from the model's output.
 
@@ -31,7 +31,7 @@ def get_prediction_sets(
             "APS" (Adaptive Prediction Sets) is implemented. Defaults to "APS".
 
     Returns:
-        np.ndarray[np.bool_]: A binary NumPy array where each row corresponds to a test sample,
+        np.ndarray: A binary NumPy array where each row corresponds to a test sample,
         and each column indicates whether a class is included in the prediction set.
 
     Raises:
