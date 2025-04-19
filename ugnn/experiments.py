@@ -33,6 +33,7 @@ class Experiment:
 
         The data is split into train, validation, calibration, and test groups based on the
         specified regime:
+
         - **Transductive**: Nodes are randomly assigned to train/valid/calib/test groups.
         - **Semi-inductive**: Nodes after a certain time point are assigned to the test group,
           while earlier nodes are randomly assigned to train/valid/calib groups.
@@ -51,12 +52,6 @@ class Experiment:
                 of epochs, learning rate, etc.).
             data_params (DataParams): Parameters for the dataset (e.g., number of nodes, time
                 steps, and classes).
-
-        Attributes:
-            results (dict): A dictionary to store evaluation metrics, including:
-                - Accuracy (overall and per time step).
-                - Average set size (overall and per time step).
-                - Coverage (overall and per time step).
         """
         self.method = method
         self.GNN_model = GNN_model

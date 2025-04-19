@@ -1,13 +1,10 @@
 Installation
 ============
 
-This section provides instructions on how to install the **UGNN** package.
+.. This section provides instructions on how to install the **UGNN** package.
 
-Installation from PyPi
-----------------------
+The package requires Python 3.11 or later. Once cloned, dependencies can be installed using the following command in the "UGNN" root directory:
 
-To install the package from PyPi, run the following command:
+.. code-block:: bash
 
-::
-
-    pip install ugnn
+    pip install -e .

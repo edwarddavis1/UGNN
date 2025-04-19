@@ -5,3 +5,5 @@ UGNN
    :maxdepth: 4
 
    ugnn
+   ugnn.utils
+   data
