@@ -109,7 +109,14 @@ for method, GNN_model, regime in product(methods, GNN_models, regimes):
     print(
         f"Running experiment for method: {method}, GNN model: {GNN_model}, regime: {regime}"
     )
-    for i in tqdm(range(num_train_semi_ind)):
+    if regime == "semi-inductive":
+        num_train = num_train_semi_ind
+    elif regime == "transductive" or regime == "temporal transductive":
+        num_train = num_train_trans
+    else:
+        raise ValueError(f"Unknown regime: {regime}")
+
+    for i in tqdm(range(num_train)):
         # Randomly separate remaining nodes according to data split proportions and regime
         train_mask, valid_mask, calib_mask, test_mask = mask_split(
             data_mask, props, seed=i, regime=regime
