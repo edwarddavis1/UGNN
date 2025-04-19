@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data.sbm.sbm_processing &#8212; UGNN  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css?v=27fed22d" />
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+   
+  <link rel="stylesheet" href="../../../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for data.sbm.sbm_processing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyemb</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">eb</span>
+
+
+<div class="viewcode-block" id="get_sbm_data">
+<a class="viewcode-back" href="../../../source/data.html#data.sbm.sbm_processing.get_sbm_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_sbm_data</span><span class="p">():</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a Stochastic Block Model (SBM) dataset as described in </span>
+<span class="sd">    `https://arxiv.org/abs/2405.19230 &lt;https://arxiv.org/abs/2405.19230&gt;`_.</span>
+<span class="sd">    </span>
+<span class="sd">    This dataset represents a three-community Dynamic Stochastic Block Model (DSBM) with an </span>
+<span class="sd">    inter-community edge probability matrix:</span>
+<span class="sd">    </span>
+<span class="sd">    .. math::</span>
+<span class="sd">    </span>
+<span class="sd">        B(t) =</span>
+<span class="sd">        \begin{bmatrix}</span>
+<span class="sd">        s_1 &amp; 0.02 &amp; 0.02 \\</span>
+<span class="sd">        0.02 &amp; s_2 &amp; 0.02 \\</span>
+<span class="sd">        0.02 &amp; 0.02 &amp; s_3</span>
+<span class="sd">        \end{bmatrix}</span>
+<span class="sd">    </span>
+<span class="sd">    where :math:`s_1`, :math:`s_2`, and :math:`s_3` represent within-community connection states. </span>
+<span class="sd">    Each :math:`s` can take one of two values: 0.08 or 0.16.</span>
+<span class="sd">    </span>
+<span class="sd">    We simulate a dynamic network over :math:`T = 8` time points, corresponding to the </span>
+<span class="sd">    :math:`2^3 = 8` possible combinations of :math:`s_1`, :math:`s_2`, and :math:`s_3`. </span>
+<span class="sd">    For each time point, the adjacency matrix :math:`A(t)` is drawn from the corresponding </span>
+<span class="sd">    probability matrix :math:`B(t)`. The ordering of these time points is random. </span>
+<span class="sd">    </span>
+<span class="sd">    The task is to predict the community label of each node.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: A tuple containing:</span>
+<span class="sd">            - As (list of np.ndarray): List of adjacency matrices for each time point.</span>
+<span class="sd">            - node_labels (np.ndarray): Array of node labels for each time point.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">K</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">K</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+
+    <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.08</span><span class="p">,</span> <span class="mf">0.16</span><span class="p">]</span>
+    <span class="n">Bs</span> <span class="o">=</span> <span class="mf">0.02</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">T</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">K</span><span class="p">))</span>
+
+    <span class="n">T_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">)]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">K</span><span class="p">):</span>
+            <span class="n">Bs</span><span class="p">[</span><span class="n">t</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">a</span><span class="p">[(</span><span class="n">T_list</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">k</span><span class="p">))</span> <span class="o">&gt;&gt;</span> <span class="n">k</span><span class="p">]</span>
+
+    <span class="n">As</span><span class="p">,</span> <span class="n">spatial_node_labels</span> <span class="o">=</span> <span class="n">eb</span><span class="o">.</span><span class="n">simulation</span><span class="o">.</span><span class="n">SBM</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">Bs</span><span class="p">,</span> <span class="n">pi</span><span class="p">)</span>
+    <span class="n">node_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">spatial_node_labels</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">As</span><span class="p">,</span> <span class="n">node_labels</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../../index.html">UGNN</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../source/modules.html">UGNN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/minimal_example.html">Minimal Example</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ed Davis.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
