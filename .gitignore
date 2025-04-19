@@ -53,5 +53,3 @@ htmlcov/
 # Results of code analysis
 results/
 
-# Sphinx documentation
-docs/_build/
