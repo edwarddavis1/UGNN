@@ -2,7 +2,7 @@ import numpy as np
 import torch
 import copy
 
-from typing import Literal, Dict
+from typing import Literal
 from ugnn.types import ExperimentParams, Masks, DataParams
 from torch_geometric.data import Data
 
@@ -22,6 +22,7 @@ class Experiment:
         masks: Masks,
         experiment_params: ExperimentParams,
         data_params: DataParams,
+        conformal_method: Literal["APS", "RAPS", "SAPS"] = "APS",
     ):
         """
         Initializes the experiment with the specified parameters.
@@ -63,6 +64,7 @@ class Experiment:
         self.data = data
         self.masks = masks
         self.params = experiment_params
+        self.conformal_method = conformal_method
 
         # Data params
         self.n = data_params["n"]
@@ -115,14 +117,16 @@ class Experiment:
                 max_valid_acc = valid_acc
                 self.best_model = copy.deepcopy(model)
 
-        print(f"Validation accuracy: {max_valid_acc:0.3f}")
+        # print(f"Validation accuracy: {max_valid_acc:0.3f}")
 
     def evaluate(self):
         """
         Evaluate the trained model and compute metrics.
         """
         # print(f"Evaluating {self.method} {self.GNN_model} in {self.regime} regime")
-        output = self.best_model(self.data.x, self.data.edge_index)
+        output = self.best_model(
+            self.data.x, self.data.edge_index, self.data.edge_weight
+        )
 
         if self.regime != "semi-inductive":
             for j in range(self.params["num_permute_trans"]):
@@ -136,7 +140,7 @@ class Experiment:
                     calib_mask,
                     test_mask,
                     self.params["alpha"],
-                    method="APS",
+                    method=self.conformal_method,
                 )
 
                 self._update_results(output, pred_sets, test_mask)
@@ -147,7 +151,7 @@ class Experiment:
                 self.masks["calib"],
                 self.masks["test"],
                 self.params["alpha"],
-                method="APS",
+                method=self.conformal_method,
             )
             self._update_results(output, pred_sets, self.masks["test"])
 

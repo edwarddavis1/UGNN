@@ -4,26 +4,73 @@ from ugnn.types import ExperimentParams
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
-EXPERIMENT_PARAMS: ExperimentParams = {
+SBM_EXPERIMENT_PARAMS: ExperimentParams = {
+    "methods": ["BD", "UA"],
+    "GNN_models": ["GCN", "GAT"],
+    "regimes": ["semi-inductive", "transductive", "temporal transductive"],
+    "outputs": ["Accuracy", "Avg Size", "Coverage"],
+    "data": "school",
+    "conformal_method": "APS",
     "num_epochs": 200,
     "learning_rate": 0.01,
     "weight_decay": 5e-4,
     "num_channels_GCN": 16,
     "num_channels_GAT": 16,
     "alpha": 0.1,
-    "props": [0.5, 0.3, 0.1, 0.1],
+    "props": [0.2, 0.1, 0.35, 0.35],
     "num_train_trans": 10,
     "num_permute_trans": 100,
     "num_train_semi_ind": 50,
+}
+
+
+SCHOOL_EXPERIMENT_PARAMS: ExperimentParams = {
     "methods": ["BD", "UA"],
     "GNN_models": ["GCN", "GAT"],
-    # "regimes": ["semi-inductive", "transductive", "temporal transductive"],
-    "regimes": ["transductive"],
+    "regimes": ["semi-inductive", "transductive", "temporal transductive"],
     "outputs": ["Accuracy", "Avg Size", "Coverage"],
+    "data": "school",
+    "conformal_method": "APS",
+    "num_epochs": 500,
+    "learning_rate": 0.01,
+    "weight_decay": 5e-4,
+    "num_channels_GCN": 16,
+    "num_channels_GAT": 16,
+    "alpha": 0.1,
+    "props": [0.2, 0.1, 0.35, 0.35],
+    "num_train_trans": 10,
+    "num_permute_trans": 100,
+    "num_train_semi_ind": 50,
 }
+
+FLIGHT_EXPERIMENT_PARAMS: ExperimentParams = {
+    "methods": ["BD", "UA"],
+    "GNN_models": ["GCN", "GAT"],
+    "regimes": ["semi-inductive", "transductive", "temporal transductive"],
+    "outputs": ["Accuracy", "Avg Size", "Coverage"],
+    "data": "flight",
+    "conformal_method": "APS",
+    "num_epochs": 30,
+    "learning_rate": 0.01,
+    "weight_decay": 5e-4,
+    "num_channels_GCN": 32,
+    "num_channels_GAT": 32,
+    "alpha": 0.1,
+    "props": [0.2, 0.1, 0.35, 0.35],
+    "num_train_trans": 10,
+    "num_permute_trans": 100,
+    "num_train_semi_ind": 50,
+}
+
 
 # # MINIMAL EXPERIMENT
 # EXPERIMENT_PARAMS: ExperimentParams = {
+#     "methods": ["BD", "UA"],
+#     "GNN_models": ["GCN", "GAT"],
+#     "regimes": ["semi-inductive", "transductive"],
+#     "outputs": ["Accuracy", "Avg Size", "Coverage"],
+#     "data": "school",
+#     "conformal_method": "APS",
 #     "num_epochs": 10,
 #     "learning_rate": 0.01,
 #     "weight_decay": 5e-4,
@@ -34,10 +81,6 @@ EXPERIMENT_PARAMS: ExperimentParams = {
 #     "num_train_trans": 5,
 #     "num_permute_trans": 5,
 #     "num_train_semi_ind": 5,
-#     "methods": ["BD", "UA"],
-#     "GNN_models": ["GCN", "GAT"],
-#     "regimes": ["semi-inductive", "transductive"],
-#     "outputs": ["Accuracy", "Avg Size", "Coverage"],
 # }
 
 
@@ -68,4 +111,5 @@ def validate_params(params):
         raise ValueError("methods must be either 'BD' or 'UA'.")
 
 
-validate_params(EXPERIMENT_PARAMS)
+validate_params(SCHOOL_EXPERIMENT_PARAMS)
+validate_params(FLIGHT_EXPERIMENT_PARAMS)
