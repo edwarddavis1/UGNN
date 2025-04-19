@@ -3,6 +3,28 @@ import numpy as np
 
 
 def get_school_data():
+    """
+    A dynamic social network between pupils at a primary school in Lyon, France
+    (Stehlé et al., 2011).
+
+    Each of the 232 pupils wore a radio identification device such that each interaction,
+    with its timestamp, could be recorded, forming a dynamic network. An interaction was
+    defined by close proximity for 20 seconds.
+
+    The task is to predict the classroom allocation of each pupil. This dataset has a
+    temporal structure that particularly distinguishes:
+
+    - **Class time**: Pupils cluster together based on their class (easier).
+    - **Lunchtime**: The cluster structure breaks down (harder).
+
+    The data covers two full school days, making it roughly repeating.
+
+    Returns:
+        tuple: A tuple containing:
+            - As (np.ndarray): Adjacency matrices for each time window.
+            - node_labels (np.ndarray): Labels for each node at each time window.
+    """
+
     window = 60 * 60
 
     t_start = (8 * 60 + 30) * 60

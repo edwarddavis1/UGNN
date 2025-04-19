@@ -3,7 +3,7 @@ import pyemb as eb
 
 
 def get_sbm_data():
-    """
+    r"""
     Generate a Stochastic Block Model (SBM) dataset as described in 
     `https://arxiv.org/abs/2405.19230 <https://arxiv.org/abs/2405.19230>`_.
     

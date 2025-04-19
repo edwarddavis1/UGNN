@@ -5,7 +5,20 @@ import pandas as pd
 
 
 def get_flight_data():
+    """
+    The OpenSky dataset tracks the number of flights (edges) between airports (nodes)
+    over each month from the start of 2019 to the end of 2021 (Olive et al., 2022).
 
+    The task is to predict the country of a given (European-only) airport. The network
+    exhibits seasonal and periodic patterns and features a structural change when the
+    COVID-19 pandemic hit Europe around March 2020.
+
+    Returns:
+        tuple: A tuple containing:
+            - **As_euro** (*np.ndarray*): Adjacency matrices for each time window, filtered
+              for European airports.
+            - **node_labels** (*np.ndarray*): Labels for each node at each time window.
+    """
     base_dir = os.path.dirname(__file__)
     datapath = os.path.join(base_dir, "flight_data")
 
