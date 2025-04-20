@@ -688,21 +688,6 @@ wheels = [
 ]
 
 [[package]]
-name = "mapie"
-version = "0.9.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "numpy" },
-    { name = "packaging" },
-    { name = "scikit-learn" },
-    { name = "scipy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f5/fc/05b7a143bb72ff48e6230e21c046f8e5c851be406595b72261237b7cfa7d/MAPIE-0.9.2.tar.gz", hash = "sha256:4adc6d346e3b607d138ba8add5a2aaa28906e6137fdf1e9e3d58951eb37b1003", size = 200047 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/85/05efa99f76008907f33a538d3776a40a7f64f4c1eef5cac4daaaab2e899a/MAPIE-0.9.2-py3-none-any.whl", hash = "sha256:765794fa2c5f9e9ade3656d9a6d4712ebb89bd5e3962d69e614f72abe0e19bd0", size = 178073 },
-]
-
-[[package]]
 name = "markupsafe"
 version = "3.0.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1862,7 +1847,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "ipykernel" },
-    { name = "mapie" },
     { name = "numpy" },
     { name = "pyemb" },
     { name = "scipy" },
@@ -1879,7 +1863,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "ipykernel", specifier = ">=6.29.5" },
-    { name = "mapie", specifier = ">=0.9.2" },
     { name = "numpy", specifier = ">=2.2.4" },
     { name = "pyemb", specifier = "==1.0.0a13" },
     { name = "scipy", specifier = ">=1.14.1" },
