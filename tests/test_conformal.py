@@ -14,7 +14,12 @@ def test_get_prediction_sets_valid_inputs():
     calib_mask = torch.tensor([True, True, True, False])
     test_mask = torch.tensor([False, False, False, True])
     pred_sets = get_prediction_sets(
-        output, data, calib_mask, test_mask, alpha=0.7, method="APS"
+        output,
+        data,
+        calib_mask,
+        test_mask,
+        score_function="APS",
+        alpha=0.7,
     )
 
     assert pred_sets.shape == (1, 2)  # Ensure correct shape
@@ -35,7 +40,12 @@ def test_get_prediction_sets_bad_quantile():
 
     with pytest.raises(ValueError, match="Specified quantile is larger than 1"):
         get_prediction_sets(
-            output, data, calib_mask, test_mask, alpha=0.1, method="APS"
+            output,
+            data,
+            calib_mask,
+            test_mask,
+            score_function="APS",
+            alpha=0.1,
         )
 
 
@@ -46,5 +56,10 @@ def test_get_prediction_sets_unsupported_method():
     test_mask = torch.tensor([False])
     with pytest.raises(ValueError, match="Unknown method: INVALID"):
         get_prediction_sets(
-            output, data, calib_mask, test_mask, alpha=0.1, method="INVALID"
+            output,
+            data,
+            calib_mask,
+            test_mask,
+            score_function="INVALID",
+            alpha=0.1,
         )

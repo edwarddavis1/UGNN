@@ -34,6 +34,7 @@
 <span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Type</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.experiment_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOT_DIR</span>
@@ -56,6 +57,8 @@
 <span class="sd">        the name of the data used in training. The `experiment_name` can be used to add a</span>
 <span class="sd">        distinguishing name to the results file. If no name is provided, this name will be</span>
 <span class="sd">        &quot;experiment&quot;.</span>
+
+<span class="sd">        On save, results are saved as a pickle file, and the parameters are saved as a json file.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            params (ExperimentParams): Parameters for the experiment.</span>
@@ -80,7 +83,7 @@
 
 <span class="sd">            Files will then be saved as</span>
 <span class="sd">            `UGNN/results/&lt;exp.data&gt;/&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl` and</span>
-<span class="sd">            `UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl`.</span>
+<span class="sd">            `UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.json`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Ensure results are saved in UGNN/results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">,</span> <span class="s2">&quot;../results&quot;</span><span class="p">)</span>
@@ -191,10 +194,10 @@
 
         <span class="c1"># Also save the params with the results</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/params_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;wb&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/params_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.json&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">,</span>
         <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results saved to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
