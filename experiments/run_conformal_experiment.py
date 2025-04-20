@@ -96,7 +96,6 @@ weight_decay = EXPERIMENT_PARAMS["weight_decay"]
 methods = EXPERIMENT_PARAMS["methods"]
 GNN_models = EXPERIMENT_PARAMS["GNN_models"]
 regimes = EXPERIMENT_PARAMS["regimes"]
-outputs = EXPERIMENT_PARAMS["outputs"]
 conformal_method = EXPERIMENT_PARAMS["conformal_method"]
 
 
