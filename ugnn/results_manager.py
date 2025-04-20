@@ -23,6 +23,8 @@ class ResultsManager:
         distinguishing name to the results file. If no name is provided, this name will be
         "experiment".
 
+        On save, results are saved as a pickle file, and the parameters are saved as a json file.
+
         Args:
             params (ExperimentParams): Parameters for the experiment.
             experiment_name (str): Name of the experiment (included in the results file name).
@@ -46,7 +48,7 @@ class ResultsManager:
 
             Files will then be saved as
             `UGNN/results/<exp.data>/<experiment_name>_<timestamp>.pkl` and
-            `UGNN/results/<exp.data>/params_<experiment_name>_<timestamp>.pkl`.
+            `UGNN/results/<exp.data>/params_<experiment_name>_<timestamp>.json`.
         """
         # Ensure results are saved in UGNN/results
         self.base_dir = os.path.join(ROOT_DIR, "../results")
