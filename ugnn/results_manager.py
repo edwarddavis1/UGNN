@@ -37,7 +37,7 @@ class ResultsManager:
 
         Example:
             >>> from ugnn.results_manager import ResultsManager
-            >>> from ugnn.config import SCHOOL_EXPERIMENT_PARAMS
+            >>> from ugnn.experiment_config import SCHOOL_EXPERIMENT_PARAMS
             >>> results_manager = ResultsManager(SCHOOL_EXPERIMENT_PARAMS)
             >>> results_manager.add_result(exp)
             >>> results_manager.save_results()

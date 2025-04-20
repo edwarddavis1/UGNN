@@ -229,8 +229,6 @@
 <a class="viewcode-back" href="../../source/ugnn.html#ugnn.networks.block_diagonal_matrix_from_series">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">block_diagonal_matrix_from_series</span><span class="p">(</span><span class="n">As</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Forms the block diagonal matrix from an adjacency series&quot;&quot;&quot;</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">As</span><span class="p">)</span>
-    <span class="n">n</span> <span class="o">=</span> <span class="n">As</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="c1"># Construct the block diagonal adjacency matrix</span>
     <span class="k">if</span> <span class="n">sparse</span><span class="o">.</span><span class="n">issparse</span><span class="p">(</span><span class="n">As</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>

@@ -38,11 +38,11 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
 </section>
-<section id="module-ugnn.config">
-<span id="ugnn-config-module"></span><h2>ugnn.config module<a class="headerlink" href="#module-ugnn.config" title="Link to this heading">¶</a></h2>
+<section id="module-ugnn.experiment_config">
+<span id="ugnn-experiment-config-module"></span><h2>ugnn.experiment_config module<a class="headerlink" href="#module-ugnn.experiment_config" title="Link to this heading">¶</a></h2>
 <dl class="py function">
-<dt class="sig sig-object py" id="ugnn.config.validate_params">
-<span class="sig-prename descclassname"><span class="pre">ugnn.config.</span></span><span class="sig-name descname"><span class="pre">validate_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/config.html#validate_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.config.validate_params" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="ugnn.experiment_config.validate_params">
+<span class="sig-prename descclassname"><span class="pre">ugnn.experiment_config.</span></span><span class="sig-name descname"><span class="pre">validate_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/experiment_config.html#validate_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.experiment_config.validate_params" title="Link to this definition">¶</a></dt>
 <dd><p>Validate the experiment parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -271,17 +271,113 @@ Functionality to take attributes will be added soon.</p>
 <span id="ugnn-results-manager-module"></span><h2>ugnn.results_manager module<a class="headerlink" href="#module-ugnn.results_manager" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.results_manager.</span></span><span class="sig-name descname"><span class="pre">ResultsManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/results_manager.html#ResultsManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.results_manager.ResultsManager" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">ugnn.results_manager.</span></span><span class="sig-name descname"><span class="pre">ResultsManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ExperimentParams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">experiment_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/results_manager.html#ResultsManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.results_manager.ResultsManager" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Initialize the ResultsManager.</p>
+<p>This class is responsible for managing the results of the experiments. For an experiment
+of given parameters, each run can be added to the ResultsManager object. This formats
+the results and can save them to a file or return them as a DataFrame.</p>
+<p>Results are saved in the <cite>UGNN/results</cite> directory, and placed in a subdirectory matching
+the name of the data used in training. The <cite>experiment_name</cite> can be used to add a
+distinguishing name to the results file. If no name is provided, this name will be
+“experiment”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>experiment_name</strong> (<em>str</em>) – Name of the experiment.</p></li>
-<li><p><strong>base_dir</strong> (<em>str</em>) – Base directory for saving results. Defaults to ‘results/’ in the project root.</p></li>
+<li><p><strong>params</strong> (<em>ExperimentParams</em>) – Parameters for the experiment.</p></li>
+<li><p><strong>experiment_name</strong> (<em>str</em>) – Name of the experiment (included in the results file name).</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.base_dir">
+<span class="sig-name descname"><span class="pre">base_dir</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.base_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Base directory for saving results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.all">
+<span class="sig-name descname"><span class="pre">all</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.all" title="Link to this definition">¶</a></dt>
+<dd><p>List to store all experiment results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.experiment_params">
+<span class="sig-name descname"><span class="pre">experiment_params</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.experiment_params" title="Link to this definition">¶</a></dt>
+<dd><p>Parameters for the experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>ExperimentParams</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.experiment_name">
+<span class="sig-name descname"><span class="pre">experiment_name</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.experiment_name" title="Link to this definition">¶</a></dt>
+<dd><p>Name of the experiment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.results_dir">
+<span class="sig-name descname"><span class="pre">results_dir</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.results_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Directory for saving results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.timestamp" title="Link to this definition">¶</a></dt>
+<dd><p>Timestamp for the results file name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.results_file">
+<span class="sig-name descname"><span class="pre">results_file</span></span><a class="headerlink" href="#ugnn.results_manager.ResultsManager.results_file" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the results file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.results_manager</span><span class="w"> </span><span class="kn">import</span> <span class="n">ResultsManager</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.experiment_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCHOOL_EXPERIMENT_PARAMS</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results_manager</span> <span class="o">=</span> <span class="n">ResultsManager</span><span class="p">(</span><span class="n">SCHOOL_EXPERIMENT_PARAMS</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results_manager</span><span class="o">.</span><span class="n">add_result</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results_manager</span><span class="o">.</span><span class="n">save_results</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">results_manager</span><span class="o">.</span><span class="n">return_df</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Files will then be saved as
+<cite>UGNN/results/&lt;exp.data&gt;/&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl</cite> and
+<cite>UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl</cite>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.add_result">
 <span class="sig-name descname"><span class="pre">add_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ugnn.experiments.Experiment" title="ugnn.experiments.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/results_manager.html#ResultsManager.add_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.results_manager.ResultsManager.add_result" title="Link to this definition">¶</a></dt>

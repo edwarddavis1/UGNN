@@ -4,10 +4,10 @@ ugnn package
 Submodules
 ----------
 
-ugnn.config module
-------------------
+ugnn.experiment_config module
+-----------------------------
 
-.. automodule:: ugnn.config
+.. automodule:: ugnn.experiment_config
    :members:
    :show-inheritance:
    :undoc-members:
