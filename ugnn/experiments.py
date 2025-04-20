@@ -134,8 +134,8 @@ class Experiment:
                     self.data,
                     calib_mask,
                     test_mask,
-                    self.params["alpha"],
-                    method=self.conformal_method,
+                    score_function=self.conformal_method,
+                    alpha=self.params["alpha"],
                 )
 
                 self._update_results(output, pred_sets, test_mask)
@@ -145,8 +145,8 @@ class Experiment:
                 self.data,
                 self.masks["calib"],
                 self.masks["test"],
-                self.params["alpha"],
-                method=self.conformal_method,
+                score_function=self.conformal_method,
+                alpha=self.params["alpha"],
             )
             self._update_results(output, pred_sets, self.masks["test"])
 

@@ -9,8 +9,8 @@ from torch_geometric.data import Data
 def get_prediction_sets(
     output: Tensor,
     data: Data,
-    calib_mask: Tensor,
-    test_mask: Tensor,
+    calib_mask: Tensor | np.ndarray,
+    test_mask: Tensor | np.ndarray,
     score_function: Literal["APS", "RAPS", "SAPS", "THR"] = "APS",
     alpha=0.1,
     kreg=1,
@@ -60,6 +60,12 @@ def get_prediction_sets(
         https://arxiv.org/pdf/2310.06430
     """
 
+    if isinstance(calib_mask, np.ndarray):
+        calib_mask = torch.tensor(calib_mask, dtype=bool)
+
+    if isinstance(test_mask, np.ndarray):
+        test_mask = torch.tensor(test_mask, dtype=bool)
+
     # Some scores require the choice of a hyperparameter
     # Following https://arxiv.org/pdf/2310.06430, split the calibration set to a
     #  calib_validation and calib_calibration set to choose the hyperparameter
@@ -96,9 +102,9 @@ def get_prediction_sets(
         calib_valid_heuristic = smx(output[calib_valid_mask])
         test_heuristic = smx(output[test_mask]).detach().numpy()
 
-        # assert (
-        #     torch.sum(calib_mask).item() < initial_mask_size
-        # ), "Calibration mask not reduced"
+        assert (
+            torch.sum(calib_mask).item() < initial_mask_size
+        ), "Calibration mask not reduced"
 
     else:
         # Compute softmax probabilities
