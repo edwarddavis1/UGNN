@@ -16,7 +16,6 @@ class ExperimentParams(TypedDict):
     methods: List[str]
     GNN_models: List[str]
     regimes: List[str]
-    outputs: List[str]
 
 
 class DataParams(TypedDict):

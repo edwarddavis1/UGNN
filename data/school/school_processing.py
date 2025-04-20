@@ -2,7 +2,7 @@ import os
 import numpy as np
 
 
-def get_school_data():
+def get_school_data(return_all_labels=False):
     """
     A dynamic social network between pupils at a primary school in Lyon, France
     (Stehlé et al., 2011).
@@ -89,4 +89,8 @@ def get_school_data():
 
     node_labels = np.tile(spatial_node_labels, T)
 
-    return As, node_labels
+    if return_all_labels:
+        all_labels = np.array(list(label_dict.keys()))
+        return As, node_labels, all_labels
+    else:
+        return As, node_labels
