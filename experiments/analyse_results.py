@@ -3,10 +3,10 @@ import pickle
 import pandas as pd
 
 
-experiment_name = "school"
+data_selection = "school"
 
 # Get the most recent results file for the experiment
-results_dir = f"results/{experiment_name}"
+results_dir = f"results/{data_selection}"
 results_files = [
     f
     for f in os.listdir(results_dir)

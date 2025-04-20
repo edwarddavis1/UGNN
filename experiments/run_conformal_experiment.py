@@ -35,24 +35,30 @@ parser.add_argument(
     default=False,
     help="Run the experiment as quick as possible (for debugging).",
 )
+parser.add_argument(
+    "--name",
+    type=str,
+    default="",
+    help="Name of the experiment run.",
+)
+
+
 args = parser.parse_args()
 data_selection = args.data
 debug_mode = args.debug
+experiment_name = args.name if args.name != "" else f"{data_selection}_exp"
 
 
 # Load selected data
 if data_selection == "sbm":
     As, node_labels = get_sbm_data()
     EXPERIMENT_PARAMS = SBM_EXPERIMENT_PARAMS
-    experiment_name = "sbm_exp"
 elif data_selection == "school":
     As, node_labels = get_school_data()
     EXPERIMENT_PARAMS = SCHOOL_EXPERIMENT_PARAMS
-    experiment_name = "school_exp"
 elif data_selection == "flight":
     As, node_labels = get_flight_data()
     EXPERIMENT_PARAMS = FLIGHT_EXPERIMENT_PARAMS
-    experiment_name = "flight_exp"
 else:
     raise ValueError(f"Unknown data: {data_selection}")
 
@@ -91,7 +97,6 @@ weight_decay = EXPERIMENT_PARAMS["weight_decay"]
 methods = EXPERIMENT_PARAMS["methods"]
 GNN_models = EXPERIMENT_PARAMS["GNN_models"]
 regimes = EXPERIMENT_PARAMS["regimes"]
-outputs = EXPERIMENT_PARAMS["outputs"]
 conformal_method = EXPERIMENT_PARAMS["conformal_method"]
 
 

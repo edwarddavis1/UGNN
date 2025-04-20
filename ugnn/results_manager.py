@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import pickle
+import json
 from typing import Type
 
 from ugnn.experiment_config import ROOT_DIR
@@ -21,6 +22,8 @@ class ResultsManager:
         the name of the data used in training. The `experiment_name` can be used to add a
         distinguishing name to the results file. If no name is provided, this name will be
         "experiment".
+
+        On save, results are saved as a pickle file, and the parameters are saved as a json file.
 
         Args:
             params (ExperimentParams): Parameters for the experiment.
@@ -45,7 +48,7 @@ class ResultsManager:
 
             Files will then be saved as
             `UGNN/results/<exp.data>/<experiment_name>_<timestamp>.pkl` and
-            `UGNN/results/<exp.data>/params_<experiment_name>_<timestamp>.pkl`.
+            `UGNN/results/<exp.data>/params_<experiment_name>_<timestamp>.json`.
         """
         # Ensure results are saved in UGNN/results
         self.base_dir = os.path.join(ROOT_DIR, "../results")
@@ -151,10 +154,10 @@ class ResultsManager:
 
         # Also save the params with the results
         with open(
-            f"{self.results_dir}/params_{self.experiment_name}_{self.timestamp}.pkl",
-            "wb",
+            f"{self.results_dir}/params_{self.experiment_name}_{self.timestamp}.json",
+            "w",
         ) as f:
-            pickle.dump(self.experiment_params, f)
+            json.dump(self.experiment_params, f, indent=4)
 
         print(f"Results saved to {self.results_file}")
 
