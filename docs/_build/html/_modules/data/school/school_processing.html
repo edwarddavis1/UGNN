@@ -37,7 +37,7 @@
 
 <div class="viewcode-block" id="get_school_data">
 <a class="viewcode-back" href="../../../source/data.html#data.school.school_processing.get_school_data">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_school_data</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_school_data</span><span class="p">(</span><span class="n">return_all_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A dynamic social network between pupils at a primary school in Lyon, France</span>
 <span class="sd">    (Stehlé et al., 2011).</span>
@@ -124,7 +124,11 @@
 
     <span class="n">node_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">spatial_node_labels</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">As</span><span class="p">,</span> <span class="n">node_labels</span></div>
+    <span class="k">if</span> <span class="n">return_all_labels</span><span class="p">:</span>
+        <span class="n">all_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">label_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">As</span><span class="p">,</span> <span class="n">node_labels</span><span class="p">,</span> <span class="n">all_labels</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">As</span><span class="p">,</span> <span class="n">node_labels</span></div>
 
 </pre></div>
 

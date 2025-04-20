@@ -59,39 +59,63 @@
 <span id="ugnn-conformal-module"></span><h2>ugnn.conformal module<a class="headerlink" href="#module-ugnn.conformal" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="ugnn.conformal.get_prediction_sets">
-<span class="sig-prename descclassname"><span class="pre">ugnn.conformal.</span></span><span class="sig-name descname"><span class="pre">get_prediction_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'APS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'RAPS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SAPS'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'APS'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a class="reference internal" href="../_modules/ugnn/conformal.html#get_prediction_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.conformal.get_prediction_sets" title="Link to this definition">¶</a></dt>
-<dd><p>Computes conformal prediction sets from the model’s output.</p>
+<span class="sig-prename descclassname"><span class="pre">ugnn.conformal.</span></span><span class="sig-name descname"><span class="pre">get_prediction_sets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">calib_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score_function</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Literal</span><span class="p"><span class="pre">[</span></span><span class="s"><span class="pre">'APS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'RAPS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'SAPS'</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="s"><span class="pre">'THR'</span></span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'APS'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kreg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/conformal.html#get_prediction_sets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.conformal.get_prediction_sets" title="Link to this definition">¶</a></dt>
+<dd><p>Computes prediction sets for a given model’s output using conformal prediction.</p>
 <p>This function uses data points from the calibration set to compute a non-conformity score,
 which measures how “strange” a data-label pair is. It then calculates the quantile of the
 non-conformity scores to form prediction sets for the test set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>output</strong> (<em>Tensor</em>) – The model’s output logits or probabilities.</p></li>
-<li><p><strong>data</strong> (<em>Data</em>) – The data object containing labels (<cite>data.y</cite>) and other graph-related information.</p></li>
-<li><p><strong>calib_mask</strong> (<em>Tensor</em>) – A boolean mask indicating the calibration set.</p></li>
-<li><p><strong>test_mask</strong> (<em>Tensor</em>) – A boolean mask indicating the test set.</p></li>
-<li><p><strong>alpha</strong> (<em>float</em><em>, </em><em>optional</em>) – Error rate. Defaults to 0.1.</p></li>
-<li><p><strong>method</strong> (<em>Literal</em><em>[</em><em>&quot;APS&quot;</em><em>]</em><em>, </em><em>optional</em>) – The method to compute prediction sets. Currently, only
-“APS” (Adaptive Prediction Sets) is implemented. Defaults to “APS”.</p></li>
+<li><p><strong>output</strong> – Tensor
+The model’s output, typically softmax probabilities or logits, for all nodes or samples.</p></li>
+<li><p><strong>data</strong> – Data
+The dataset object containing features, labels, and other graph-related information.</p></li>
+<li><p><strong>calib_mask</strong> – Tensor
+A boolean mask indicating which samples belong to the calibration set.</p></li>
+<li><p><strong>test_mask</strong> – Tensor
+A boolean mask indicating which samples belong to the test set.</p></li>
+<li><p><strong>score_function</strong> – <p>Literal[“APS”, “RAPS”, “SAPS”, “THR”], optional
+The scoring function to use for conformal prediction. Options include:</p>
+<ul>
+<li><p>”APS”: Adaptive Prediction Sets.</p></li>
+<li><p>”RAPS”: Regularized Adaptive Prediction Sets.</p></li>
+<li><p>”SAPS”: Smoothed Adaptive Prediction Sets.</p></li>
+<li><p>”THR”: Threshold-based Prediction Sets.</p></li>
+</ul>
+<p>Default is “APS”.</p>
+</p></li>
+<li><p><strong>alpha</strong> – float, optional
+The miscoverage level for conformal prediction. Determines the confidence level
+(e.g., alpha=0.1 corresponds to 90% confidence). Default is 0.1.</p></li>
+<li><p><strong>kreg</strong> – int, optional
+Regularization parameter used in certain scoring functions like “RAPS” and “SAPS”.
+Default is 1.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A binary NumPy array where each row corresponds to a test sample,
-and each column indicates whether a class is included in the prediction set.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>np.ndarray</p>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><ul class="simple">
-<li><p><strong>NotImplementedError</strong> – If the specified method is “RAPS”, which is not implemented.</p></li>
-<li><p><strong>ValueError</strong> – If an unknown method is specified.</p></li>
-<li><p><strong>ValueError</strong> – If the computed quantile is greater than 1, which indicates insufficient
-    calibration data or an invalid alpha value.</p></li>
-</ul>
+<dd class="field-even"><p><dl class="simple">
+<dt>Tensor</dt><dd><p>A tensor containing the prediction sets for the test samples. Each set contains
+the indices of the predicted classes for each test sample.</p>
 </dd>
 </dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>prediction_sets</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>For “RAPS” and “SAPS” scoring functions, the calibration set is further split into
+a validation set (20%) and a calibration set (80%) to tune the hyperparameter <cite>kreg</cite>.</p></li>
+<li><p>The function assumes that the calibration and test masks are disjoint.</p></li>
+</ul>
+<p class="rubric">References</p>
+<ul class="simple">
+<li><p>“Conformal Prediction for Reliable Machine Learning: Theory and Applications” (2023)
+<a class="reference external" href="https://arxiv.org/pdf/2310.06430">https://arxiv.org/pdf/2310.06430</a></p></li>
+</ul>
 </dd></dl>
 
 </section>
@@ -281,6 +305,7 @@ the results and can save them to a file or return them as a DataFrame.</p>
 the name of the data used in training. The <cite>experiment_name</cite> can be used to add a
 distinguishing name to the results file. If no name is provided, this name will be
 “experiment”.</p>
+<p>On save, results are saved as a pickle file, and the parameters are saved as a json file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -377,7 +402,7 @@ distinguishing name to the results file. If no name is provided, this name will 
 </div>
 <p>Files will then be saved as
 <cite>UGNN/results/&lt;exp.data&gt;/&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl</cite> and
-<cite>UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl</cite>.</p>
+<cite>UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.json</cite>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="ugnn.results_manager.ResultsManager.add_result">
 <span class="sig-name descname"><span class="pre">add_result</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">exp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#ugnn.experiments.Experiment" title="ugnn.experiments.Experiment"><span class="pre">Experiment</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/results_manager.html#ResultsManager.add_result"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.results_manager.ResultsManager.add_result" title="Link to this definition">¶</a></dt>
