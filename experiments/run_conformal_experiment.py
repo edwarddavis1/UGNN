@@ -8,7 +8,8 @@ import argparse
 
 from data import get_sbm_data, get_school_data, get_flight_data
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
-from ugnn.config import (
+from ugnn.experiment_config import (
+    MINIMAL_EXPERIMENT_PARAMS,
     SBM_EXPERIMENT_PARAMS,
     SCHOOL_EXPERIMENT_PARAMS,
     FLIGHT_EXPERIMENT_PARAMS,
@@ -24,28 +25,44 @@ parser = argparse.ArgumentParser(description="Run conformal experiment.")
 parser.add_argument(
     "--data",
     type=str,
-    choices=["sbm", "school", "flight"],
-    required=True,
+    choices=["test", "sbm", "school", "flight"],
+    default="school",
     help="Name of the experiment to run (sbm, school, or flight).",
 )
+parser.add_argument(
+    "--debug",
+    action="store_true",
+    default=False,
+    help="Run the experiment as quick as possible (for debugging).",
+)
 args = parser.parse_args()
-experiment_name = args.data
+data_selection = args.data
+debug_mode = args.debug
 
 
-# Load data
-if experiment_name == "sbm":
+# Load selected data
+if data_selection == "sbm":
     As, node_labels = get_sbm_data()
     EXPERIMENT_PARAMS = SBM_EXPERIMENT_PARAMS
-elif experiment_name == "school":
+    experiment_name = "sbm_exp"
+elif data_selection == "school":
     As, node_labels = get_school_data()
     EXPERIMENT_PARAMS = SCHOOL_EXPERIMENT_PARAMS
-elif experiment_name == "flight":
+    experiment_name = "school_exp"
+elif data_selection == "flight":
     As, node_labels = get_flight_data()
     EXPERIMENT_PARAMS = FLIGHT_EXPERIMENT_PARAMS
+    experiment_name = "flight_exp"
 else:
-    raise ValueError(f"Unknown experiment name: {experiment_name}")
+    raise ValueError(f"Unknown data: {data_selection}")
 
-print(f"Loaded {experiment_name} data ")
+print(f"Loaded {data_selection} data ")
+
+# If in debug mode, reduce the number of epochs and training samples
+if debug_mode:
+    EXPERIMENT_PARAMS = MINIMAL_EXPERIMENT_PARAMS
+    EXPERIMENT_PARAMS["data"] = data_selection
+    experiment_name = f"{experiment_name}_debug"
 
 T = As.shape[0]
 n = As[0].shape[0]
@@ -79,8 +96,8 @@ conformal_method = EXPERIMENT_PARAMS["conformal_method"]
 
 
 # Prepare results directory
-experiment_name = EXPERIMENT_PARAMS["data"]
-results_dir = f"results/{experiment_name}"
+data_selection = EXPERIMENT_PARAMS["data"]
+results_dir = f"results/{data_selection}"
 os.makedirs(results_dir, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 results_file = f"{results_dir}/experiment_{timestamp}.pkl"
@@ -100,9 +117,7 @@ dataset_UA = Unfolded_Network(dataset)[0]  # Unfolded representation
 data_mask = non_zero_degree_mask(As, n, T)
 
 # Results manager object to keep track of each experiment run
-res = ResultsManager(
-    experiment_name=experiment_name,
-)
+res = ResultsManager(params=EXPERIMENT_PARAMS, experiment_name=experiment_name)
 
 # Main experiment loop
 for method, GNN_model, regime in product(methods, GNN_models, regimes):

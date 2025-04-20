@@ -4,12 +4,32 @@ from ugnn.types import ExperimentParams
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
+MINIMAL_EXPERIMENT_PARAMS: ExperimentParams = {
+    "methods": ["UA"],
+    "GNN_models": ["GCN"],
+    "regimes": ["semi-inductive"],
+    "outputs": ["Accuracy", "Avg Size", "Coverage"],
+    "data": "school",
+    "conformal_method": "APS",
+    "num_epochs": 2,
+    "learning_rate": 0.01,
+    "weight_decay": 5e-4,
+    "num_channels_GCN": 8,
+    "num_channels_GAT": 8,
+    "alpha": 0.1,
+    "props": [0.2, 0.1, 0.35, 0.35],
+    "num_train_trans": 2,
+    "num_permute_trans": 2,
+    "num_train_semi_ind": 2,
+}
+
+
 SBM_EXPERIMENT_PARAMS: ExperimentParams = {
     "methods": ["BD", "UA"],
     "GNN_models": ["GCN", "GAT"],
     "regimes": ["semi-inductive", "transductive", "temporal transductive"],
     "outputs": ["Accuracy", "Avg Size", "Coverage"],
-    "data": "school",
+    "data": "sbm",
     "conformal_method": "APS",
     "num_epochs": 200,
     "learning_rate": 0.01,
@@ -63,27 +83,6 @@ FLIGHT_EXPERIMENT_PARAMS: ExperimentParams = {
 }
 
 
-# # MINIMAL EXPERIMENT
-# EXPERIMENT_PARAMS: ExperimentParams = {
-#     "methods": ["BD", "UA"],
-#     "GNN_models": ["GCN", "GAT"],
-#     "regimes": ["semi-inductive", "transductive"],
-#     "outputs": ["Accuracy", "Avg Size", "Coverage"],
-#     "data": "school",
-#     "conformal_method": "APS",
-#     "num_epochs": 10,
-#     "learning_rate": 0.01,
-#     "weight_decay": 5e-4,
-#     "num_channels_GCN": 16,
-#     "num_channels_GAT": 16,
-#     "alpha": 0.1,
-#     "props": [0.5, 0.3, 0.1, 0.1],
-#     "num_train_trans": 5,
-#     "num_permute_trans": 5,
-#     "num_train_semi_ind": 5,
-# }
-
-
 def validate_params(params):
     """
     Validate the experiment parameters.
@@ -111,5 +110,7 @@ def validate_params(params):
         raise ValueError("methods must be either 'BD' or 'UA'.")
 
 
+validate_params(MINIMAL_EXPERIMENT_PARAMS)
+validate_params(SBM_EXPERIMENT_PARAMS)
 validate_params(SCHOOL_EXPERIMENT_PARAMS)
 validate_params(FLIGHT_EXPERIMENT_PARAMS)

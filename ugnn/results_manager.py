@@ -3,30 +3,62 @@ from datetime import datetime
 import pickle
 from typing import Type
 
-from ugnn.config import ROOT_DIR
+from ugnn.experiment_config import ROOT_DIR
+from ugnn.types import ExperimentParams
 from ugnn.experiments import Experiment
-
-# TODO: Make sure to save the config with the results
 
 
 class ResultsManager:
-    def __init__(self, experiment_name: str):
+    def __init__(self, params: ExperimentParams, experiment_name: str = ""):
         """
         Initialize the ResultsManager.
 
+        This class is responsible for managing the results of the experiments. For an experiment
+        of given parameters, each run can be added to the ResultsManager object. This formats
+        the results and can save them to a file or return them as a DataFrame.
+
+        Results are saved in the `UGNN/results` directory, and placed in a subdirectory matching
+        the name of the data used in training. The `experiment_name` can be used to add a
+        distinguishing name to the results file. If no name is provided, this name will be
+        "experiment".
+
         Args:
+            params (ExperimentParams): Parameters for the experiment.
+            experiment_name (str): Name of the experiment (included in the results file name).
+
+        Attributes:
+            base_dir (str): Base directory for saving results.
+            all (list): List to store all experiment results.
+            experiment_params (ExperimentParams): Parameters for the experiment.
             experiment_name (str): Name of the experiment.
-            base_dir (str): Base directory for saving results. Defaults to 'results/' in the project root.
+            results_dir (str): Directory for saving results.
+            timestamp (str): Timestamp for the results file name.
+            results_file (str): Path to the results file.
+
+        Example:
+            >>> from ugnn.results_manager import ResultsManager
+            >>> from ugnn.config import SCHOOL_EXPERIMENT_PARAMS
+            >>> results_manager = ResultsManager(SCHOOL_EXPERIMENT_PARAMS)
+            >>> results_manager.add_result(exp)
+            >>> results_manager.save_results()
+            >>> df = results_manager.return_df()
+
+            Files will then be saved as
+            `UGNN/results/<exp.data>/<experiment_name>_<timestamp>.pkl` and
+            `UGNN/results/<exp.data>/params_<experiment_name>_<timestamp>.pkl`.
         """
         # Ensure results are saved in UGNN/results
         self.base_dir = os.path.join(ROOT_DIR, "../results")
-
         self.all = []
-        self.experiment_name = experiment_name
-        self.results_dir = f"{self.base_dir}/{experiment_name}"
+        self.experiment_params = params
+        self.experiment_name = (
+            experiment_name if experiment_name != "" else "experiment"
+        )
+        self.results_dir = f"{self.base_dir}/{params["data"]}"
         self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.results_file = f"{self.results_dir}/experiment_{self.timestamp}.pkl"
-        self.experiment_params = None
+        self.results_file = (
+            f"{self.results_dir}/{self.experiment_name}_{self.timestamp}.pkl"
+        )
 
         # Create the results directory if it doesn't exist
         os.makedirs(self.results_dir, exist_ok=True)
@@ -90,9 +122,6 @@ class ResultsManager:
             exp (Experiment): The Experiment object containing results and metadata.
         """
 
-        if self.experiment_params is None:
-            self.experiment_params = exp.params
-
         exp_rows = self._format_exp_results(exp)
 
         self.all.extend(
@@ -121,7 +150,10 @@ class ResultsManager:
             pickle.dump(self.all, f)
 
         # Also save the params with the results
-        with open(f"{self.results_dir}/params_{self.timestamp}.pkl", "wb") as f:
+        with open(
+            f"{self.results_dir}/params_{self.experiment_name}_{self.timestamp}.pkl",
+            "wb",
+        ) as f:
             pickle.dump(self.experiment_params, f)
 
         print(f"Results saved to {self.results_file}")
