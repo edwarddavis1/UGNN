@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 
 
@@ -131,4 +132,4 @@ def pad_unfolded_mask(mask, n):
     Returns:
         np.ndarray: The padded mask.
     """
-    return np.concatenate((np.array([False] * n), mask))
+    return torch.tensor(np.concatenate((np.array([False] * n), mask)))

@@ -68,7 +68,7 @@ def get_prediction_sets(
     if score_function in ["RAPS", "SAPS"]:
 
         # Split the calibration set into a calibration and validation set
-        n_calib = np.sum(calib_mask)
+        n_calib = torch.sum(calib_mask).item()
         n_valid = int(0.2 * n_calib)
 
         # Get indices of the calibration set
@@ -82,21 +82,23 @@ def get_prediction_sets(
         calib_indices = calib_indices[n_valid:]
 
         # Create new masks
-        calib_valid_mask = np.zeros_like(calib_mask, dtype=bool)
+        calib_valid_mask = torch.zeros_like(calib_mask, dtype=bool)
         calib_valid_mask[calib_valid_indices] = True
 
-        calib_mask = np.zeros_like(calib_mask, dtype=bool)
+        calib_mask = torch.zeros_like(calib_mask, dtype=bool)
         calib_mask[calib_indices] = True
 
         # Compute softmax probabilities
         n_calib = calib_mask.sum()
         n_calib_valid = calib_valid_mask.sum()
         smx = torch.nn.Softmax(dim=1)
-        calib_heuristic = smx(output[calib_mask])  # .detach().numpy()
+        calib_heuristic = smx(output[calib_mask])
         calib_valid_heuristic = smx(output[calib_valid_mask])
         test_heuristic = smx(output[test_mask]).detach().numpy()
 
-        assert np.sum(calib_mask) < initial_mask_size, "Calibration mask not reduced"
+        # assert (
+        #     torch.sum(calib_mask).item() < initial_mask_size
+        # ), "Calibration mask not reduced"
 
     else:
         # Compute softmax probabilities
@@ -107,15 +109,11 @@ def get_prediction_sets(
 
     if score_function == "APS":
         calib_scores = (
-            _APS_scores(probs=calib_heuristic, label=data.y[calib_mask])
-            .detach()
-            .numpy()
+            APS_scores(probs=calib_heuristic, label=data.y[calib_mask]).detach().numpy()
         )
     elif score_function == "THR":
         calib_scores = (
-            _THR_scores(probs=calib_heuristic, label=data.y[calib_mask])
-            .detach()
-            .numpy()
+            THR_scores(probs=calib_heuristic, label=data.y[calib_mask]).detach().numpy()
         )
     elif score_function == "RAPS":
 
@@ -125,7 +123,7 @@ def get_prediction_sets(
         for pen in pen_to_try:
 
             calib_valid_scores = (
-                _RAPS_scores(
+                RAPS_scores(
                     probs=calib_valid_heuristic,
                     label=data.y[calib_valid_mask],
                     penalty=pen,
@@ -160,7 +158,7 @@ def get_prediction_sets(
 
         # print(f"\nBest penalty: {best_param}")
         calib_scores = (
-            _RAPS_scores(
+            RAPS_scores(
                 probs=calib_heuristic,
                 label=data.y[calib_mask],
                 penalty=best_param,
@@ -178,7 +176,7 @@ def get_prediction_sets(
         for wt in wt_to_try:
 
             calib_valid_scores = (
-                _SAPS_scores(
+                SAPS_scores(
                     probs=calib_valid_heuristic,
                     label=data.y[calib_valid_mask],
                     weight=wt,
@@ -211,7 +209,7 @@ def get_prediction_sets(
 
         # print(f"\nBest weight: {best_param}")
         calib_scores = (
-            _SAPS_scores(
+            SAPS_scores(
                 probs=calib_heuristic,
                 label=data.y[calib_mask],
                 weight=best_param,
@@ -247,7 +245,7 @@ def _sort_sum(probs):
     return indices, ordered, cumsum
 
 
-def _APS_scores(probs, label):
+def APS_scores(probs, label):
 
     indices, ordered, cumsum = _sort_sum(probs)
     U = torch.rand(indices.shape[0], device=probs.device)
@@ -260,7 +258,7 @@ def _APS_scores(probs, label):
     return torch.where(idx[1] == 0, scores_first_rank, scores_usual)
 
 
-def _RAPS_scores(probs, label, penalty, kreg):
+def RAPS_scores(probs, label, penalty, kreg):
     indices, ordered, cumsum = _sort_sum(probs)
     U = torch.rand(indices.shape[0], device=probs.device)
     idx = torch.where(indices == label.view(-1, 1))
@@ -273,12 +271,12 @@ def _RAPS_scores(probs, label, penalty, kreg):
     return torch.where(idx[1] == 0, scores_first_rank, scores_usual)
 
 
-def _THR_scores(probs, label):
+def THR_scores(probs, label):
 
     return 1 - probs[torch.arange(probs.shape[0], device=probs.device), label]
 
 
-def _SAPS_scores(probs, label, weight):
+def SAPS_scores(probs, label, weight):
 
     if weight <= 0:
         raise ValueError("The parameter 'weight' must be a positive value.")

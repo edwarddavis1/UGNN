@@ -75,13 +75,16 @@ The dataset object containing features, labels, and other graph-related informat
 A boolean mask indicating which samples belong to the calibration set.</p></li>
 <li><p><strong>test_mask</strong> – Tensor
 A boolean mask indicating which samples belong to the test set.</p></li>
-<li><p><strong>score_function</strong> – Literal[“APS”, “RAPS”, “SAPS”, “THR”], optional
-The scoring function to use for conformal prediction. Options include:
-- “APS”: Adaptive Prediction Sets.
-- “RAPS”: Regularized Adaptive Prediction Sets.
-- “SAPS”: Smoothed Adaptive Prediction Sets.
-- “THR”: Threshold-based Prediction Sets.
-Default is “APS”.</p></li>
+<li><p><strong>score_function</strong> – <p>Literal[“APS”, “RAPS”, “SAPS”, “THR”], optional
+The scoring function to use for conformal prediction. Options include:</p>
+<ul>
+<li><p>”APS”: Adaptive Prediction Sets.</p></li>
+<li><p>”RAPS”: Regularized Adaptive Prediction Sets.</p></li>
+<li><p>”SAPS”: Smoothed Adaptive Prediction Sets.</p></li>
+<li><p>”THR”: Threshold-based Prediction Sets.</p></li>
+</ul>
+<p>Default is “APS”.</p>
+</p></li>
 <li><p><strong>alpha</strong> – float, optional
 The miscoverage level for conformal prediction. Determines the confidence level
 (e.g., alpha=0.1 corresponds to 90% confidence). Default is 0.1.</p></li>
@@ -104,15 +107,15 @@ the indices of the predicted classes for each test sample.</p>
 </dl>
 <p class="rubric">Notes</p>
 <ul class="simple">
-<li><p>For “RAPS” and “SAPS” scoring functions, the calibration set is further split into</p></li>
+<li><p>For “RAPS” and “SAPS” scoring functions, the calibration set is further split into
+a validation set (20%) and a calibration set (80%) to tune the hyperparameter <cite>kreg</cite>.</p></li>
+<li><p>The function assumes that the calibration and test masks are disjoint.</p></li>
 </ul>
-<p>a validation set (20%) and a calibration set (80%) to tune the hyperparameter <cite>kreg</cite>.
-- The function assumes that the calibration and test masks are disjoint.</p>
 <p class="rubric">References</p>
 <ul class="simple">
-<li><p>“Conformal Prediction for Reliable Machine Learning: Theory and Applications” (2023)</p></li>
+<li><p>“Conformal Prediction for Reliable Machine Learning: Theory and Applications” (2023)
+<a class="reference external" href="https://arxiv.org/pdf/2310.06430">https://arxiv.org/pdf/2310.06430</a></p></li>
 </ul>
-<p><a class="reference external" href="https://arxiv.org/pdf/2310.06430">https://arxiv.org/pdf/2310.06430</a></p>
 </dd></dl>
 
 </section>

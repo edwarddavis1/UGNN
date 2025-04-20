@@ -68,10 +68,12 @@
 <span class="sd">            A boolean mask indicating which samples belong to the test set.</span>
 <span class="sd">        score_function : Literal[&quot;APS&quot;, &quot;RAPS&quot;, &quot;SAPS&quot;, &quot;THR&quot;], optional</span>
 <span class="sd">            The scoring function to use for conformal prediction. Options include:</span>
+
 <span class="sd">            - &quot;APS&quot;: Adaptive Prediction Sets.</span>
 <span class="sd">            - &quot;RAPS&quot;: Regularized Adaptive Prediction Sets.</span>
 <span class="sd">            - &quot;SAPS&quot;: Smoothed Adaptive Prediction Sets.</span>
 <span class="sd">            - &quot;THR&quot;: Threshold-based Prediction Sets.</span>
+
 <span class="sd">            Default is &quot;APS&quot;.</span>
 <span class="sd">        alpha : float, optional</span>
 <span class="sd">            The miscoverage level for conformal prediction. Determines the confidence level</span>
@@ -87,12 +89,12 @@
 
 <span class="sd">    Notes:</span>
 <span class="sd">        - For &quot;RAPS&quot; and &quot;SAPS&quot; scoring functions, the calibration set is further split into</span>
-<span class="sd">        a validation set (20%) and a calibration set (80%) to tune the hyperparameter `kreg`.</span>
+<span class="sd">          a validation set (20%) and a calibration set (80%) to tune the hyperparameter `kreg`.</span>
 <span class="sd">        - The function assumes that the calibration and test masks are disjoint.</span>
 
 <span class="sd">    References:</span>
 <span class="sd">        - &quot;Conformal Prediction for Reliable Machine Learning: Theory and Applications&quot; (2023)</span>
-<span class="sd">        https://arxiv.org/pdf/2310.06430</span>
+<span class="sd">          https://arxiv.org/pdf/2310.06430</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Some scores require the choice of a hyperparameter</span>
