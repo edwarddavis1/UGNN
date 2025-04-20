@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import pickle
+import json
 from typing import Type
 
 from ugnn.experiment_config import ROOT_DIR
@@ -151,10 +152,10 @@ class ResultsManager:
 
         # Also save the params with the results
         with open(
-            f"{self.results_dir}/params_{self.experiment_name}_{self.timestamp}.pkl",
-            "wb",
+            f"{self.results_dir}/params_{self.experiment_name}_{self.timestamp}.json",
+            "w",
         ) as f:
-            pickle.dump(self.experiment_params, f)
+            json.dump(self.experiment_params, f, indent=4)
 
         print(f"Results saved to {self.results_file}")
 
