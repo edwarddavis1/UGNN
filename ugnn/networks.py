@@ -176,8 +176,6 @@ def unfolded_matrix_from_series(As):
 
 def block_diagonal_matrix_from_series(As):
     """Forms the block diagonal matrix from an adjacency series"""
-    T = len(As)
-    n = As[0].shape[0]
 
     # Construct the block diagonal adjacency matrix
     if sparse.issparse(As[0]):

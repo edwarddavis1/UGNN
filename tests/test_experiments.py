@@ -1,7 +1,7 @@
 import numpy as np
 from unittest.mock import MagicMock
 
-from ugnn.config import SBM_EXPERIMENT_PARAMS
+from ugnn.experiment_config import SBM_EXPERIMENT_PARAMS
 from ugnn.experiments import Experiment
 
 

@@ -7,6 +7,8 @@ from ugnn.networks import Dynamic_Network, Unfolded_Network
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 from ugnn.gnns import GCN, train, valid
 
+# This is a minimal example of how to train a UGCN
+
 
 # Load data
 As, node_labels = get_school_data()

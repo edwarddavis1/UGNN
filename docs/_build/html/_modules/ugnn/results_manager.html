@@ -36,32 +36,64 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Type</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOT_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.experiment_config</span><span class="w"> </span><span class="kn">import</span> <span class="n">ROOT_DIR</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExperimentParams</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ugnn.experiments</span><span class="w"> </span><span class="kn">import</span> <span class="n">Experiment</span>
-
-<span class="c1"># TODO: Make sure to save the config with the results</span>
 
 
 <div class="viewcode-block" id="ResultsManager">
 <a class="viewcode-back" href="../../source/ugnn.html#ugnn.results_manager.ResultsManager">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ResultsManager</span><span class="p">:</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">experiment_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">ExperimentParams</span><span class="p">,</span> <span class="n">experiment_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the ResultsManager.</span>
 
+<span class="sd">        This class is responsible for managing the results of the experiments. For an experiment</span>
+<span class="sd">        of given parameters, each run can be added to the ResultsManager object. This formats</span>
+<span class="sd">        the results and can save them to a file or return them as a DataFrame.</span>
+
+<span class="sd">        Results are saved in the `UGNN/results` directory, and placed in a subdirectory matching</span>
+<span class="sd">        the name of the data used in training. The `experiment_name` can be used to add a</span>
+<span class="sd">        distinguishing name to the results file. If no name is provided, this name will be</span>
+<span class="sd">        &quot;experiment&quot;.</span>
+
 <span class="sd">        Args:</span>
+<span class="sd">            params (ExperimentParams): Parameters for the experiment.</span>
+<span class="sd">            experiment_name (str): Name of the experiment (included in the results file name).</span>
+
+<span class="sd">        Attributes:</span>
+<span class="sd">            base_dir (str): Base directory for saving results.</span>
+<span class="sd">            all (list): List to store all experiment results.</span>
+<span class="sd">            experiment_params (ExperimentParams): Parameters for the experiment.</span>
 <span class="sd">            experiment_name (str): Name of the experiment.</span>
-<span class="sd">            base_dir (str): Base directory for saving results. Defaults to &#39;results/&#39; in the project root.</span>
+<span class="sd">            results_dir (str): Directory for saving results.</span>
+<span class="sd">            timestamp (str): Timestamp for the results file name.</span>
+<span class="sd">            results_file (str): Path to the results file.</span>
+
+<span class="sd">        Example:</span>
+<span class="sd">            &gt;&gt;&gt; from ugnn.results_manager import ResultsManager</span>
+<span class="sd">            &gt;&gt;&gt; from ugnn.experiment_config import SCHOOL_EXPERIMENT_PARAMS</span>
+<span class="sd">            &gt;&gt;&gt; results_manager = ResultsManager(SCHOOL_EXPERIMENT_PARAMS)</span>
+<span class="sd">            &gt;&gt;&gt; results_manager.add_result(exp)</span>
+<span class="sd">            &gt;&gt;&gt; results_manager.save_results()</span>
+<span class="sd">            &gt;&gt;&gt; df = results_manager.return_df()</span>
+
+<span class="sd">            Files will then be saved as</span>
+<span class="sd">            `UGNN/results/&lt;exp.data&gt;/&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl` and</span>
+<span class="sd">            `UGNN/results/&lt;exp.data&gt;/params_&lt;experiment_name&gt;_&lt;timestamp&gt;.pkl`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Ensure results are saved in UGNN/results</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ROOT_DIR</span><span class="p">,</span> <span class="s2">&quot;../results&quot;</span><span class="p">)</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">all</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span> <span class="o">=</span> <span class="n">experiment_name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">experiment_name</span> <span class="k">if</span> <span class="n">experiment_name</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span> <span class="k">else</span> <span class="s2">&quot;experiment&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y%m</span><span class="si">%d</span><span class="s2">_%H%M%S&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">results_file</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/experiment_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results_file</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.pkl&quot;</span>
+        <span class="p">)</span>
 
         <span class="c1"># Create the results directory if it doesn&#39;t exist</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -127,9 +159,6 @@
 <span class="sd">            exp (Experiment): The Experiment object containing results and metadata.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="n">params</span>
-
         <span class="n">exp_rows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_format_exp_results</span><span class="p">(</span><span class="n">exp</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
@@ -161,7 +190,10 @@
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="c1"># Also save the params with the results</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/params_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">,</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="si">}</span><span class="s2">/params_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.pkl&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;wb&quot;</span><span class="p">,</span>
+        <span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">experiment_params</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Results saved to </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">results_file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
