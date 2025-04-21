@@ -61,7 +61,6 @@ SCHOOL_EXPERIMENT_PARAMS: ExperimentParams = {
 }
 
 
-
 FLIGHT_EXPERIMENT_PARAMS: ExperimentParams = {
     "methods": ["BD", "UA"],
     "GNN_models": ["GCN", "GAT"],
