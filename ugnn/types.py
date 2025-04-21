@@ -22,6 +22,7 @@ class ExperimentParams(TypedDict):
 
 AdjacencySeries = Union[np.ndarray, List[csr_matrix]]
 
+
 class DataParams(TypedDict):
     As: AdjacencySeries
     node_labels: np.ndarray
