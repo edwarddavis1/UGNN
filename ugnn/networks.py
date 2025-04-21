@@ -6,6 +6,8 @@ import torch
 import torch_geometric
 from torch_geometric.data import Dataset
 
+from ugnn.types import AdjacencySeries
+
 
 class Dynamic_Network(Dataset):
     """
@@ -13,18 +15,18 @@ class Dynamic_Network(Dataset):
     with T time points.
 
     Here a dynamic network consists of:
-        As: a list of adjacency matrices of shape (T, n, n)
+        As: A collection of T nxn adjacency matrices, shape (T, n, n)
         labels: a list of labels of shape (T, n)
 
     As we will be using GNNs to embed these networks, we must supply some attributes.
     For this, we use the nxn identity matrix for each time point.
     """
 
-    def __init__(self, As, labels):
-        self.As = As  # list of adjacency matrices
+    def __init__(self, As: AdjacencySeries, labels: np.ndarray):
+        self.As = As  # series of adjacency matrices
         self.T = As.shape[0]  # number of time points
         self.n = As[0].shape[0]  # number of nodes
-        self.classes = labels  # list of labels
+        self.classes = labels  # array of labels
         self.sparse = sparse.issparse(As[0])  # check if the matrices are sparse
 
     def __len__(self):
@@ -65,7 +67,7 @@ class Block_Diagonal_Network(Dataset):
     Functionality to take attributes will be added soon.
     """
 
-    def __init__(self, dataset):
+    def __init__(self, dataset: Dataset):
         self.A = block_diagonal_matrix_from_series(dataset.As)
         self.sparse = sparse.issparse(self.A)
         self.T = dataset.T
@@ -100,7 +102,7 @@ class Unfolded_Network(Dataset):
     Functionality to take attributes will be added soon.
     """
 
-    def __init__(self, dataset):
+    def __init__(self, dataset: Dataset):
         self.A = unfolded_matrix_from_series(dataset.As)
         self.sparse = sparse.issparse(self.A)
         self.T = dataset.T
@@ -148,7 +150,7 @@ def form_empty_attributes(m, sparse=False):
     return x
 
 
-def unfolded_matrix_from_series(As):
+def unfolded_matrix_from_series(As: AdjacencySeries):
     """Forms the general unfolded matrix from an adjacency series"""
     T = len(As)
     n = As[0].shape[0]
@@ -174,7 +176,7 @@ def unfolded_matrix_from_series(As):
     return DA
 
 
-def block_diagonal_matrix_from_series(As):
+def block_diagonal_matrix_from_series(As: AdjacencySeries):
     """Forms the block diagonal matrix from an adjacency series"""
 
     # Construct the block diagonal adjacency matrix

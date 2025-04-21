@@ -1,8 +1,10 @@
-from typing import TypedDict, List
+from typing import TypedDict, List, Union
+from scipy.sparse import csr_matrix
 import numpy as np
 
 
 class ExperimentParams(TypedDict):
+    experiment_name: str
     num_epochs: int
     learning_rate: float
     weight_decay: float
@@ -18,7 +20,12 @@ class ExperimentParams(TypedDict):
     regimes: List[str]
 
 
+AdjacencySeries = Union[np.ndarray, List[csr_matrix]]
+
+
 class DataParams(TypedDict):
+    As: AdjacencySeries
+    node_labels: np.ndarray
     n: int
     T: int
     num_classes: int

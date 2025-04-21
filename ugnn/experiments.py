@@ -1,10 +1,19 @@
 import numpy as np
 import torch
 import copy
+import argparse
 
 from typing import Literal
-from ugnn.types import ExperimentParams, Masks, DataParams
 from torch_geometric.data import Data
+from ugnn.types import ExperimentParams, Masks, DataParams
+
+from data import get_sbm_data, get_school_data, get_flight_data
+from ugnn.experiment_config import (
+    MINIMAL_EXPERIMENT_PARAMS,
+    SBM_EXPERIMENT_PARAMS,
+    SCHOOL_EXPERIMENT_PARAMS,
+    FLIGHT_EXPERIMENT_PARAMS,
+)
 
 from ugnn.gnns import GCN, GAT, train, valid
 from ugnn.utils.metrics import accuracy, avg_set_size, coverage
@@ -225,3 +234,123 @@ class Experiment:
                 ]
             )
         ]
+
+
+def parse_args_load_data():
+    """
+    Organise experiment parameters and data parameters for running experiments.
+
+    Parameters for GNN fitting are defined in ugnn.experiment_config.py.
+    Arguments can be modified in the command line using argparse.
+
+    Selected data is then loaded, with matching GNN fitting params for the data.
+
+    Returns:
+        EXPERIMENT_PARAMS (ExperimentParams): Experiment parameters.
+        DATA_PARAMS (DataParams): Data parameters.
+
+    """
+    parser = argparse.ArgumentParser(description="Run conformal experiment.")
+    parser.add_argument(
+        "--data",
+        type=str,
+        choices=["test", "sbm", "school", "flight"],
+        default="school",
+        help="Name of the experiment to run (sbm, school, or flight).",
+    )
+    parser.add_argument(
+        "--debug",
+        action="store_true",
+        default=False,
+        help="Run the experiment as quick as possible (for debugging).",
+    )
+    parser.add_argument(
+        "--name",
+        type=str,
+        default="",
+        help="Name of the experiment run.",
+    )
+    parser.add_argument(
+        "--regime",
+        type=str,
+        choices=["all", "semi-inductive", "transductive", "temporal transductive"],
+        default="all",
+        help="Regime of the experiment to run (semi-inductive, transductive, or temporal transductive).",
+    )
+    parser.add_argument(
+        "--conformal_method",
+        type=str,
+        choices=["APS", "RAPS", "SAPS", "THR"],
+        default="APS",
+        help="Conformal method to use (APS, RAPS, SAPS or THR).",
+    )
+    parser.add_argument(
+        "--method",
+        type=str,
+        choices=["all", "BD", "UA"],
+        default="all",
+        help="Method to use to represent the dynamic network. Either unfolded [UA] or block diagonal [BD].",
+    )
+    parser.add_argument(
+        "--GNN",
+        type=str,
+        choices=["all", "GCN", "GAT"],
+        default="all",
+        help="GNN model to use (GCN or GAT).",
+    )
+
+    args = parser.parse_args()
+    data_selection = args.data
+    debug_mode = args.debug
+    experiment_name = args.name if args.name != "" else f"{data_selection}_exp"
+
+    # Load selected data
+    if data_selection == "sbm":
+        As, node_labels = get_sbm_data()
+        EXPERIMENT_PARAMS = SBM_EXPERIMENT_PARAMS
+    elif data_selection == "school":
+        As, node_labels = get_school_data()
+        EXPERIMENT_PARAMS = SCHOOL_EXPERIMENT_PARAMS
+    elif data_selection == "flight":
+        As, node_labels = get_flight_data()
+        EXPERIMENT_PARAMS = FLIGHT_EXPERIMENT_PARAMS
+    else:
+        raise ValueError(f"Unknown data: {data_selection}")
+
+    print(f"Loaded {data_selection} data ")
+
+    # If in debug mode, reduce the number of epochs and training samples
+    if debug_mode:
+        EXPERIMENT_PARAMS = MINIMAL_EXPERIMENT_PARAMS
+        EXPERIMENT_PARAMS["data"] = data_selection
+        experiment_name = f"{experiment_name}_debug"
+
+    # Data parameters
+    T = As.shape[0]
+    n = As[0].shape[0]
+    num_classes = len(np.unique(node_labels))
+
+    DATA_PARAMS: DataParams = {
+        "As": As,
+        "node_labels": node_labels,
+        "n": n,
+        "T": T,
+        "num_classes": num_classes,
+    }
+
+    # Add in any changes to the EXPERIMENT_PARAMS from argparser
+    EXPERIMENT_PARAMS["experiment_name"] = experiment_name
+    EXPERIMENT_PARAMS["regimes"] = (
+        [args.regime]
+        if args.regime != "all"
+        else ["semi-inductive", "transductive", "temporal transductive"]
+    )
+    EXPERIMENT_PARAMS["conformal_method"] = args.conformal_method
+    EXPERIMENT_PARAMS["methods"] = (
+        [args.method] if args.method != "all" else ["BD", "UA"]
+    )
+    EXPERIMENT_PARAMS["GNN_models"] = (
+        [args.GNN] if args.GNN != "all" else ["GCN", "GAT"]
+    )
+
+    return EXPERIMENT_PARAMS, DATA_PARAMS
