@@ -3,16 +3,12 @@ import pickle
 import pandas as pd
 
 
-data_selection = "school"
+data_selection = "sbm"
 
 # Get the most recent results file for the experiment
 results_dir = f"results/{data_selection}"
-results_files = [
-    f
-    for f in os.listdir(results_dir)
-    if f.startswith("experiment_") and f.endswith(".pkl")
-]
-results_files.sort(reverse=True)  # Sort files in descending order
+results_files = [f for f in os.listdir(results_dir) if f.endswith(".pkl")]
+results_files.sort(reverse=False)
 results_file = os.path.join(results_dir, results_files[0])
 
 with open(results_file, "rb") as f:
