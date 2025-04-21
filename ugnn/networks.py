@@ -13,7 +13,7 @@ class Dynamic_Network(Dataset):
     with T time points.
 
     Here a dynamic network consists of:
-        As: a list of adjacency matrices of shape (T, n, n)
+        As: A collection of T nxn adjacency matrices, shape (T, n, n)
         labels: a list of labels of shape (T, n)
 
     As we will be using GNNs to embed these networks, we must supply some attributes.

@@ -42,28 +42,10 @@ SBM_EXPERIMENT_PARAMS: ExperimentParams = {
 }
 
 
-# SCHOOL_EXPERIMENT_PARAMS: ExperimentParams = {
-#     "methods": ["BD", "UA"],
-#     "GNN_models": ["GCN", "GAT"],
-#     "regimes": ["semi-inductive", "transductive", "temporal transductive"],
-#     "data": "school",
-#     "conformal_method": "APS",
-#     "num_epochs": 500,
-#     "learning_rate": 0.01,
-#     "weight_decay": 5e-4,
-#     "num_channels_GCN": 16,
-#     "num_channels_GAT": 16,
-#     "alpha": 0.1,
-#     "props": [0.2, 0.1, 0.35, 0.35],
-#     "num_train_trans": 10,
-#     "num_permute_trans": 100,
-#     "num_train_semi_ind": 50,
-# }
-
 SCHOOL_EXPERIMENT_PARAMS: ExperimentParams = {
-    "methods": ["UA"],
-    "GNN_models": ["GCN"],
-    "regimes": ["semi-inductive"],
+    "methods": ["BD", "UA"],
+    "GNN_models": ["GCN", "GAT"],
+    "regimes": ["semi-inductive", "transductive", "temporal transductive"],
     "data": "school",
     "conformal_method": "APS",
     "num_epochs": 500,
@@ -77,6 +59,8 @@ SCHOOL_EXPERIMENT_PARAMS: ExperimentParams = {
     "num_permute_trans": 100,
     "num_train_semi_ind": 50,
 }
+
+
 
 FLIGHT_EXPERIMENT_PARAMS: ExperimentParams = {
     "methods": ["BD", "UA"],

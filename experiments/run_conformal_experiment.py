@@ -4,85 +4,22 @@ import numpy as np
 from tqdm import tqdm
 import os
 from datetime import datetime
-import argparse
 
-from data import get_sbm_data, get_school_data, get_flight_data
 from ugnn.networks import Dynamic_Network, Block_Diagonal_Network, Unfolded_Network
-from ugnn.experiment_config import (
-    MINIMAL_EXPERIMENT_PARAMS,
-    SBM_EXPERIMENT_PARAMS,
-    SCHOOL_EXPERIMENT_PARAMS,
-    FLIGHT_EXPERIMENT_PARAMS,
-)
 from ugnn.utils.masks import mask_split, non_zero_degree_mask
-from ugnn.experiments import Experiment
+from ugnn.experiments import Experiment, parse_args_load_data
 from ugnn.results_manager import ResultsManager
-from ugnn.types import DataParams
 
 np.random.seed(42)
-# %%
-parser = argparse.ArgumentParser(description="Run conformal experiment.")
-parser.add_argument(
-    "--data",
-    type=str,
-    choices=["test", "sbm", "school", "flight"],
-    default="school",
-    help="Name of the experiment to run (sbm, school, or flight).",
-)
-parser.add_argument(
-    "--debug",
-    action="store_true",
-    default=False,
-    help="Run the experiment as quick as possible (for debugging).",
-)
-parser.add_argument(
-    "--name",
-    type=str,
-    default="",
-    help="Name of the experiment run.",
-)
-
-
-args = parser.parse_args()
-data_selection = args.data
-debug_mode = args.debug
-experiment_name = args.name if args.name != "" else f"{data_selection}_exp"
-
-
-# Load selected data
-if data_selection == "sbm":
-    As, node_labels = get_sbm_data()
-    EXPERIMENT_PARAMS = SBM_EXPERIMENT_PARAMS
-elif data_selection == "school":
-    As, node_labels = get_school_data()
-    EXPERIMENT_PARAMS = SCHOOL_EXPERIMENT_PARAMS
-elif data_selection == "flight":
-    As, node_labels = get_flight_data()
-    EXPERIMENT_PARAMS = FLIGHT_EXPERIMENT_PARAMS
-else:
-    raise ValueError(f"Unknown data: {data_selection}")
-
-print(f"Loaded {data_selection} data ")
-
-# If in debug mode, reduce the number of epochs and training samples
-if debug_mode:
-    EXPERIMENT_PARAMS = MINIMAL_EXPERIMENT_PARAMS
-    EXPERIMENT_PARAMS["data"] = data_selection
-    experiment_name = f"{experiment_name}_debug"
-
-T = As.shape[0]
-n = As[0].shape[0]
-
-num_classes = len(np.unique(node_labels))
-DATA_PARAMS: DataParams = {
-    "n": n,
-    "T": T,
-    "num_classes": num_classes,
-}
-
 
 # %%
+# Parse args and load data
+EXPERIMENT_PARAMS, DATA_PARAMS = parse_args_load_data()
+
 # Unpack parameters from EXPERIMENT_PARAMS
+experiment_name = EXPERIMENT_PARAMS["experiment_name"]
+
+# GNN and conformal params
 props = EXPERIMENT_PARAMS["props"]
 alpha = EXPERIMENT_PARAMS["alpha"]
 num_train_trans = EXPERIMENT_PARAMS["num_train_trans"]
@@ -94,6 +31,7 @@ num_channels_GAT = EXPERIMENT_PARAMS["num_channels_GAT"]
 learning_rate = EXPERIMENT_PARAMS["learning_rate"]
 weight_decay = EXPERIMENT_PARAMS["weight_decay"]
 
+# Model params
 methods = EXPERIMENT_PARAMS["methods"]
 GNN_models = EXPERIMENT_PARAMS["GNN_models"]
 regimes = EXPERIMENT_PARAMS["regimes"]
@@ -106,6 +44,12 @@ results_dir = f"results/{data_selection}"
 os.makedirs(results_dir, exist_ok=True)
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 results_file = f"{results_dir}/experiment_{timestamp}.pkl"
+
+# Unpack DATA_PARAMS
+As = DATA_PARAMS["As"]
+node_labels = DATA_PARAMS["node_labels"]
+n = DATA_PARAMS["n"]
+T = DATA_PARAMS["T"]
 
 # %%
 # Convert the data from adjacency matrices and labels to a torch geometric dataset
