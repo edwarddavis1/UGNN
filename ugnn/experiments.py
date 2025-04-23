@@ -110,9 +110,9 @@ class Experiment:
             lr=self.params["learning_rate"],
             weight_decay=self.params["weight_decay"],
         )
-        max_valid_acc = 0
 
         # print(f"\nTraining {self.method} {self.GNN_model} in {self.regime} regime")
+        max_valid_acc = 0
         for epoch in range(self.params["num_epochs"]):
             _ = train(model, self.data, self.masks["train"], optimizer)
             valid_acc = valid(model, self.data, self.masks["valid"])
@@ -173,10 +173,10 @@ class Experiment:
         self.results["Coverage"]["All"].append(
             coverage(pred_sets, self.data, test_mask)
         )
-        print("Accuracy: ", self.results["Accuracy"]["All"][-1])
-        print("Avg Size: ", self.results["Avg Size"]["All"][-1])
-        print("Coverage: ", self.results["Coverage"]["All"][-1])
-        print("-------------------------------------------------------")
+        # print("Accuracy: ", self.results["Accuracy"]["All"][-1])
+        # print("Avg Size: ", self.results["Avg Size"]["All"][-1])
+        # print("Coverage: ", self.results["Coverage"]["All"][-1])
+        # print("-------------------------------------------------------")
 
         for t in range(self.T):
             test_mask_t = self._get_time_mask(test_mask, t)
