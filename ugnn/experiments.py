@@ -173,6 +173,10 @@ class Experiment:
         self.results["Coverage"]["All"].append(
             coverage(pred_sets, self.data, test_mask)
         )
+        print("Accuracy: ", self.results["Accuracy"]["All"][-1])
+        print("Avg Size: ", self.results["Avg Size"]["All"][-1])
+        print("Coverage: ", self.results["Coverage"]["All"][-1])
+        print("-------------------------------------------------------")
 
         for t in range(self.T):
             test_mask_t = self._get_time_mask(test_mask, t)

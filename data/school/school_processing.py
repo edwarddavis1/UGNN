@@ -27,10 +27,14 @@ def get_school_data(return_all_labels=False):
 
     window = 60 * 60
 
-    t_start = (8 * 60 + 30) * 60
-    t_end = (17 * 60 + 30) * 60
+    day_1_start = (8 * 60 + 30) * 60
+    day_1_end = (17 * 60 + 30) * 60
+    day_2_start = ((24 + 8) * 60 + 30) * 60
+    day_2_end = ((24 + 17) * 60 + 30) * 60
 
-    T = int((t_end - t_start) // window)
+    T1 = int((day_1_end - day_1_start) // window)
+    T2 = int((day_2_end - day_2_start) // window)
+    T = T1 + T2
     print(f"Number of time windows: {T}")
 
     base_dir = os.path.dirname(__file__)
@@ -57,7 +61,11 @@ def get_school_data(return_all_labels=False):
     for line in file:
         node_i, node_j, time, id_i, id_j = line.strip("\n").split(",")
 
-        if int(time) > 24 * 60 * 60:
+        if day_1_start <= int(time) < day_1_end:
+            t = (int(time) - day_1_start) // window
+        elif day_2_start <= int(time) < day_2_end:
+            t = T1 + (int(time) - day_2_start) // window
+        else:
             continue
 
         if node_i not in nodes:
@@ -68,7 +76,6 @@ def get_school_data(return_all_labels=False):
             nodes.append(node_j)
             spatial_node_labels.append(label_dict[id_j])
 
-        t = (int(time) - t_start) // window
         edge_tuples.append([t, node_i, node_j])
 
     edge_tuples = np.unique(edge_tuples, axis=0)
