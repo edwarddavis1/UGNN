@@ -117,6 +117,7 @@ for method, GNN_model, regime in product(methods, GNN_models, regimes):
             # Parameters for the dataset (indep. of experiment)
             data_params=DATA_PARAMS,
             conformal_method=conformal_method,
+            seed=i,
         )
 
         # Train the GNN on the data

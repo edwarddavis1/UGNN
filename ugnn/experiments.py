@@ -32,6 +32,7 @@ class Experiment:
         experiment_params: ExperimentParams,
         data_params: DataParams,
         conformal_method: Literal["APS", "RAPS", "SAPS"] = "APS",
+        seed: int = 123,
     ):
         """
         Initializes the experiment with the specified parameters.
@@ -69,6 +70,7 @@ class Experiment:
         self.masks = masks
         self.params = experiment_params
         self.conformal_method = conformal_method
+        self.seed = seed
 
         # Data params
         self.n = data_params["n"]
@@ -90,14 +92,14 @@ class Experiment:
                 self.data.num_nodes,
                 self.params["num_channels_GCN"],
                 self.num_classes,
-                seed=0,
+                seed=self.seed,
             )
         elif self.GNN_model == "GAT":
             return GAT(
                 self.data.num_nodes,
                 self.params["num_channels_GAT"],
                 self.num_classes,
-                seed=0,
+                seed=self.seed,
             )
 
     def train(self):
@@ -173,10 +175,10 @@ class Experiment:
         self.results["Coverage"]["All"].append(
             coverage(pred_sets, self.data, test_mask)
         )
-        # print("Accuracy: ", self.results["Accuracy"]["All"][-1])
-        # print("Avg Size: ", self.results["Avg Size"]["All"][-1])
-        # print("Coverage: ", self.results["Coverage"]["All"][-1])
-        # print("-------------------------------------------------------")
+        print("Accuracy: ", self.results["Accuracy"]["All"][-1])
+        print("Avg Size: ", self.results["Avg Size"]["All"][-1])
+        print("Coverage: ", self.results["Coverage"]["All"][-1])
+        print("-------------------------------------------------------")
 
         for t in range(self.T):
             test_mask_t = self._get_time_mask(test_mask, t)
