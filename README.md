@@ -1,8 +1,25 @@
-# [IN DEVELOPMENT] UGNN: The Unfolded Graph Neural Networks package.
+# UGNN: The Unfolded Graph Neural Networks package.
 
 Welcome to the documentation for **UGNN**, a library for using the **unfolded graph neural network** (UGNN) model for discrete-time dynamic graphs.
 
 For more details on this model, see the paper: [Valid Conformal Prediction for Dynamic GNNs](https://arxiv.org/abs/2405.19230), accepted at ICLR 2025.
+
+## About Unfolded GNN
+
+For a set of $T$ $n$-node networks, $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)} \in \R^{n \times n}$, it's (dilated) **unfolding** is given as
+
+$$
+\mathbf{A} = \begin{bmatrix} \mathbf{0} & \mathbf{\mathcal{A}} \\ \mathbf{\mathcal{A}}^\top & \mathbf{0} \end{bmatrix},
+$$
+
+where $\mathbf{\mathcal{A}} = [\mathbf{A}^{(1)}, \dots, \mathbf{A}^{(T)}] \in \R^{n \times nT}$ is a column-concatenation of all networks in the set.
+
+_A UGNN is simply a GNN which takes as input an unfolded matrix._
+
+#### Perks of UGNN
+
+-   **Accuracy**: For tasks predicting node labels into the future, UGNN displays considerable gains over the PyTorch geometric established method (e.g. accuracy gains up to 92% vs 12%).
+-   **Uncertainty Quantification**: UGNN allows for the application of _conformal prediction_ to quantify uncertainty on the prediction of future nodes.
 
 ## Installation
 
@@ -14,7 +31,7 @@ pip install -e .
 
 ## Usage Example
 
-Here is a minimal example of how to train an unfolded GCN (UGCN) model using the UGNN library.
+Here is a minimal example of how to train an unfolded GCN (UGCN) model using the UGNN library. A notebook with a full example of UGNN training and conformal prediction is supplied in the `examples` directory.
 
 ```python
 import numpy as np
@@ -37,7 +54,8 @@ dyn_network = Dynamic_Network(As, node_labels)
 # "Unfold" the T graph dynamic network into a single graph
 unf_network = Unfolded_Network(dyn_network)[0]
 
-# Create masks for training and validation
+# Create masks for train/valid/calib/test for a selected regime
+# Calib data only required if using conformal prediction downstream of training
 data_mask = non_zero_degree_mask(As, As.shape[1], As.shape[0])
 train_mask, valid_mask, _, test_mask = mask_split(
     data_mask, split_props=[0.5, 0.3, 0, 0.2], regime="semi-inductive"
@@ -51,7 +69,7 @@ model = GCN(
 )
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01, weight_decay=5e-4)
 
-for epoch in range(10):  # Reduced epochs for brevity
+for epoch in range(10):
     train(model, unf_network, train_mask, optimizer)
     valid_acc = valid(model, unf_network, valid_mask)
     print(f"Epoch {epoch}, Validation Accuracy: {valid_acc:.3f}")
