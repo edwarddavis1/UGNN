@@ -1,20 +1,22 @@
 # UGNN: The Unfolded Graph Neural Networks package.
 
-Welcome to the documentation for **UGNN**, a library for using the **unfolded graph neural network** (UGNN) model for discrete-time dynamic graphs.
+Welcome to the documentation for **UGNN**, a library for using the **unfolded graph neural network**.
+
+_UGNN is a powerful and interpretable model for embedding a collection of networks with a common node set._
 
 For more details on this model, see the paper: [Valid Conformal Prediction for Dynamic GNNs](https://arxiv.org/abs/2405.19230), accepted at ICLR 2025.
 
 ## About Unfolded GNN
 
-For a set of $T$ $n$-node networks, $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)} \in \R^{n \times n}$, it's (dilated) **unfolding** is given as
+#### Definition
+
+Let $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)} \in \R^{n \times n}$ be a collection of $T$ adjacency matrices, each representing an $n$-node network. An **unfolding** of this collection is given as
 
 $$
 \mathbf{A} = \begin{bmatrix} \mathbf{0} & \mathbf{\mathcal{A}} \\ \mathbf{\mathcal{A}}^\top & \mathbf{0} \end{bmatrix},
 $$
 
-where $\mathbf{\mathcal{A}} = [\mathbf{A}^{(1)}, \dots, \mathbf{A}^{(T)}] \in \R^{n \times nT}$ is a column-concatenation of all networks in the set.
-
-_A UGNN is simply a GNN which takes as input an unfolded matrix._
+where $\mathbf{\mathcal{A}} = [\mathbf{A}^{(1)}, \dots, \mathbf{A}^{(T)}] \in \R^{n \times nT}$ is a column-concatenation of all networks in the set. _A UGNN is simply a GNN which takes an unfolded matrix as input._
 
 #### Perks of UGNN
 
@@ -36,16 +38,15 @@ Here is a minimal example of how to train an unfolded GCN (UGCN) model using the
 ```python
 import numpy as np
 import torch
-from data.school.school_processing import get_school_data
+from data import get_school_data
 from ugnn.networks import Dynamic_Network, Unfolded_Network
 from ugnn.gnns import GCN, train, valid
 from ugnn.utils.masks import non_zero_degree_mask, mask_split, pad_unfolded_mask
 
 # Load example data - T adjacency matrices and n node labels
-As, spatial_node_labels = get_school_data()
-n = As.shape[1]
-T = As.shape[0]
-node_labels = np.tile(spatial_node_labels, T)
+As, node_labels = get_school_data()
+T = len(As)
+n = As[0].shape[0]
 num_classes = len(np.unique(node_labels))
 
 # Convert to a torch geometric dataset containing T graphs
