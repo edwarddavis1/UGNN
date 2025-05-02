@@ -10,13 +10,17 @@ For more details on this model, see the paper: [Valid Conformal Prediction for D
 
 #### Definition
 
-Let $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)} \in \R^{n \times n}$ be a collection of $T$ adjacency matrices, each representing an $n$-node network. An **unfolding** of this collection is given as
+Let $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)}$ be a collection of $T$ $n \times n$ adjacency matrices, each representing an $n$-node network. An **unfolding** of this collection is given as
 
-$$
-\mathbf{A} = \begin{bmatrix} \mathbf{0} & \mathbf{\mathcal{A}} \\ \mathbf{\mathcal{A}}^\top & \mathbf{0} \end{bmatrix},
-$$
+```math
+\begin{equation}
+\mathbf{A} = \begin{bmatrix}
+\mathbf{0} & \mathcal{A} \\ \mathcal{A}^\top & \mathbf{0}
+\end{bmatrix}.
+\end{equation}
+```
 
-where $\mathbf{\mathcal{A}} = [\mathbf{A}^{(1)}, \dots, \mathbf{A}^{(T)}] \in \R^{n \times nT}$ is a column-concatenation of all networks in the set. _A UGNN is simply a GNN which takes an unfolded matrix as input._
+where $\mathbf{\mathcal{A}} = [\mathbf{A}^{(1)}, \dots, \mathbf{A}^{(T)}]$ is an $n \times nT$ column-concatenation of all networks in the set. _A UGNN is simply a GNN which takes an unfolded matrix as input._
 
 #### Perks of UGNN
 
