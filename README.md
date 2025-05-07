@@ -14,9 +14,9 @@ Let $\mathbf{A}^{(1)},\dots,\mathbf{A}^{(T)}$ be a collection of $T$ $n \times n
 
 ```math
 \begin{equation}
-\mathbf{A} = \begin{pmatrix}
+\mathbf{A} = \begin{bmatrix}
 \mathbf{0} & \mathcal{A} \\ \mathcal{A}^\top & \mathbf{0}
-\end{pmatrix},
+\end{bmatrix},
 \end{equation}
 ```
 
