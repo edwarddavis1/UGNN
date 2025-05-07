@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ugnn.utils package &#8212; UGNN  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="data package" href="data.html" />
+    <link rel="prev" title="ugnn package" href="ugnn.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="ugnn-utils-package">
+<h1>ugnn.utils package<a class="headerlink" href="#ugnn-utils-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-ugnn.utils.masks">
+<span id="ugnn-utils-masks-module"></span><h2>ugnn.utils.masks module<a class="headerlink" href="#module-ugnn.utils.masks" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.masks.mask_mix">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.masks.</span></span><span class="sig-name descname"><span class="pre">mask_mix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask_1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/utils/masks.html#mask_mix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.masks.mask_mix" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.masks.mask_split">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.masks.</span></span><span class="sig-name descname"><span class="pre">mask_split</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_props</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">regime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'transductive'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/utils/masks.html#mask_split"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.masks.mask_split" title="Link to this definition">¶</a></dt>
+<dd><p>Split a mask into train/valid/calib/test based on the specified regime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>np.ndarray</em>) – A boolean mask of shape (n, T), where n is the number of nodes
+and T is the number of time steps.</p></li>
+<li><p><strong>split_props</strong> (<em>list</em><em> of </em><em>float</em>) – Proportions for splitting the data into
+train/valid/calib/test. The proportions should sum to 1.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – Random seed for reproducibility. Defaults to 0.</p></li>
+<li><p><strong>regime</strong> (<em>str</em><em>, </em><em>optional</em>) – Splitting regime, either “transductive” or “semi-inductive”.
+Defaults to “transductive”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>A list of boolean masks for each split (train, valid, calib, test).</dt><dd><p>Each mask has the same shape as the input mask.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list of np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.masks.non_zero_degree_mask">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.masks.</span></span><span class="sig-name descname"><span class="pre">non_zero_degree_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">As</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/utils/masks.html#non_zero_degree_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.masks.non_zero_degree_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Create a data mask which removes nodes with zero connections at each time step.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>As</strong> (<em>list</em><em> of </em><em>np.ndarray</em>) – List of adjacency matrices for each time step.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – Number of nodes.</p></li>
+<li><p><strong>T</strong> (<em>int</em>) – Number of time steps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A boolean mask indicating usable node/time pairs.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.masks.pad_unfolded_mask">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.masks.</span></span><span class="sig-name descname"><span class="pre">pad_unfolded_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/ugnn/utils/masks.html#pad_unfolded_mask"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.masks.pad_unfolded_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Padding required due to the n extra anchor nodes introduced in the unfolded representation.</p>
+<p>These nodes are not included in training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>np.ndarray</em>) – The original mask.</p></li>
+<li><p><strong>n</strong> (<em>int</em>) – The number of nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The padded mask.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ugnn.utils.metrics">
+<span id="ugnn-utils-metrics-module"></span><h2>ugnn.utils.metrics module<a class="headerlink" href="#module-ugnn.utils.metrics" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.metrics.accuracy">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.metrics.</span></span><span class="sig-name descname"><span class="pre">accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tensor</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/ugnn/utils/metrics.html#accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.metrics.accuracy" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the accuracy of predictions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>Tensor</em>) – Model output logits.</p></li>
+<li><p><strong>data</strong> (<em>Data</em>) – Graph data containing ground truth labels.</p></li>
+<li><p><strong>test_mask</strong> (<em>Tensor</em>) – Mask indicating test nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Accuracy of the predictions.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.metrics.avg_set_size">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.metrics.</span></span><span class="sig-name descname"><span class="pre">avg_set_size</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_sets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/ugnn/utils/metrics.html#avg_set_size"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.metrics.avg_set_size" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the average size of prediction sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pred_sets</strong> (<em>np.ndarray</em>) – Array of prediction sets.</p></li>
+<li><p><strong>test_mask</strong> (<em>np.ndarray</em>) – Mask indicating test nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Average size of prediction sets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="ugnn.utils.metrics.coverage">
+<span class="sig-prename descclassname"><span class="pre">ugnn.utils.metrics.</span></span><span class="sig-name descname"><span class="pre">coverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pred_sets</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="p"><span class="pre">[</span></span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">test_mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">float</span></span></span><a class="reference internal" href="../_modules/ugnn/utils/metrics.html#coverage"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#ugnn.utils.metrics.coverage" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the coverage of prediction sets.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pred_sets</strong> (<em>np.ndarray</em>) – Array of prediction sets.</p></li>
+<li><p><strong>data</strong> (<em>Data</em>) – Graph data containing ground truth labels.</p></li>
+<li><p><strong>test_mask</strong> (<em>np.ndarray</em>) – Mask indicating test nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Coverage of the prediction sets.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-ugnn.utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-ugnn.utils" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">UGNN</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">UGNN</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ugnn.html">ugnn package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ugnn.utils package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data.html">data package</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/minimal_example.html">Minimal Example</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">UGNN</a><ul>
+      <li>Previous: <a href="ugnn.html" title="previous chapter">ugnn package</a></li>
+      <li>Next: <a href="data.html" title="next chapter">data package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Ed Davis.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/source/ugnn.utils.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
