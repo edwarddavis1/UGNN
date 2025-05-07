@@ -11,6 +11,7 @@ dependencies = [
     "ipykernel>=6.29.5",
     "nbformat>=5.10.4",
     "numpy>=2.2.4",
+    "plotly>=6.0.1",
     "pyemb[plotting]==1.0.0a13",
     "scipy>=1.14.1",
     "torch>=2.6.0",
